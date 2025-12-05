@@ -51,8 +51,12 @@ const universitiesDB: Record<string, any> = {
   },
 };
 
-export default function UniversityPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export default async function UniversityPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const uni = universitiesDB[id] || universitiesDB["iitu"];
 
   return (
@@ -61,7 +65,9 @@ export default function UniversityPage({ params }: { params: { id: string } }) {
         <Image
           src={uni.image}
           alt={uni.name}
-          className="w-full h-full object-cover opacity-40"
+          fill
+          className="object-cover opacity-40"
+          priority
         />
         <div className="absolute inset-0 flex flex-col justify-end container mx-auto px-4 pb-8">
           <Link
