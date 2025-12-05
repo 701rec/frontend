@@ -1,6 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, MapPin, Phone, Globe, Award, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  Phone,
+  Globe,
+  Award,
+  BookOpen,
+  Hotel,
+  Shield,
+} from "lucide-react"; // Добавил Hotel и Shield
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,89 +20,57 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getUniversityById } from "@/api/api";
+import { notFound } from "next/navigation";
+import { type University } from "@/api/api";
 
-const universitiesDB: Record<string, any> = {
-  iitu: {
-    name: "International Information Technology University",
-    short: "IITU (МУИТ)",
-    desc: "МУИТ — ведущий специализированный IT-университет Центральной Азии. Вуз формирует цифровую элиту страны, сотрудничает с Apple, Microsoft, Huawei.",
-    image:
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
-    location: "Алматы, ул. Манаса 34/1",
-    rating: 4.9,
-    price: "1 200 000 ₸",
-    contacts: "+7 (727) 320 00 00",
-    programs: [
-      "Computer Science",
-      "Cybersecurity",
-      "Software Engineering",
-      "Big Data Analysis",
-      "IT Management",
-    ],
-  },
-  kbtu: {
-    name: "Kazakh-British Technical University",
-    short: "KBTU (КБТУ)",
-    desc: "КБТУ — лидер технического образования. Программы двойного диплома с Лондонской школой экономики. Сильнейшие связи с нефтегазовым сектором.",
-    image:
-      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80",
-    location: "Алматы, ул. Толе би 59",
-    rating: 4.8,
-    price: "1 800 000 ₸",
-    contacts: "+7 (727) 357 42 42",
-    programs: [
-      "Petroleum Engineering",
-      "Maritime Academy",
-      "Information Systems",
-      "Finance & Audit",
-      "Business School",
-    ],
-  },
-  sdu: {
-    name: "Suleyman Demirel University",
-    short: "SDU (СДУ)",
-    desc: "СДУ — современный кампус, англоязычное обучение и сильная корпоративная культура. Один из самых быстрорастущих университетов.",
-    image:
-      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80",
-    location: "Каскелен, Алматинская обл.",
-    rating: 4.7,
-    price: "1 400 000 ₸",
-    contacts: "+7 (727) 307 95 65",
-    programs: [
-      "Computer Engineering",
-      "Law",
-      "International Relations",
-      "Mathematics",
-      "Journalism",
-    ],
-  },
-  kaznu: {
-    name: "Al-Farabi Kazakh National University",
-    short: "KazNU (КазНУ)",
-    desc: "Главный национальный вуз страны. Огромный кампус (Казгуград), фундаментальная наука и более 100 специальностей.",
-    image:
-      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
-    location: "Алматы, пр. Аль-Фараби 71",
-    rating: 4.6,
-    price: "1 000 000 ₸",
-    contacts: "+7 (727) 377 33 33",
-    programs: ["Physics", "Chemistry", "Biology", "History", "Philology"],
-  },
-};
+// ✅ Импортируем функцию API и тип
+
+// Удаляем локальный объект universitiesDB, он больше не нужен.
+// const universitiesDB: Record<string, any> = { ... };
 
 export default async function UniversityPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  // ✅ ИСПРАВЛЕНИЕ: params - это просто объект
+  params: { id: string };
 }) {
-  const { id } = await params;
-  const uni = universitiesDB[id] || universitiesDB["iitu"];
+  const { id } = params; //
+
+  // ✅ 1. Получаем данные асинхронно с сервера
+  const uni: University | null = await getUniversityById(id);
+  if (!uni) {
+    notFound();
+  }
+  // 2. Обработка случая, когда университет не найден (404)
+
+  // 3. Адаптация данных API к используемому в JSX (для краткости и удобства)
+  // Мы используем поля uni.* напрямую
+
+  // Дополнительные свойства для вкладки "Об университете"
+  const features = [
+    {
+      label: "Общежитие",
+      value: uni.dorm ? "Есть" : "Нет",
+      icon: Hotel,
+      color: uni.dorm ? "text-green-500" : "text-red-500",
+      bgColor: uni.dorm ? "bg-green-500/10" : "bg-red-500/10",
+    },
+    {
+      label: "Военная кафедра",
+      value: uni.military ? "Есть" : "Нет",
+      icon: Shield,
+      color: uni.military ? "text-blue-500" : "text-red-500",
+      bgColor: uni.military ? "bg-blue-500/10" : "bg-red-500/10",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-10 transition-colors duration-300">
       <div className="relative h-64 md:h-96 bg-universe-indigo overflow-hidden">
         <Image
-          src={uni.image}
+          // ✅ Используем uni.imageUrl
+          src={uni.imageUrl}
           alt={uni.name}
           fill
           className="object-cover opacity-40"
@@ -110,7 +87,8 @@ export default async function UniversityPage({
             <div>
               <div className="flex gap-2 mb-3">
                 <Badge className="bg-universe-cyan text-universe-dark hover:bg-universe-cyan/80 font-bold border-none">
-                  Top University
+                  {/* Используем uni.type */}
+                  {uni.type}
                 </Badge>
                 <Badge
                   variant="outline"
@@ -120,15 +98,18 @@ export default async function UniversityPage({
                 </Badge>
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-md">
-                {uni.short}
+                {/* ✅ Используем uni.shortName */}
+                {uni.shortName}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-slate-200 text-sm md:text-base font-medium">
                 <span className="flex items-center gap-1">
                   <MapPin className="h-4 w-4 text-universe-cyan" />{" "}
+                  {/* ✅ Используем uni.location */}
                   {uni.location}
                 </span>
                 <span className="flex items-center gap-1">
                   <Award className="h-4 w-4 text-yellow-400" /> Рейтинг:{" "}
+                  {/* ✅ Используем uni.rating */}
                   {uni.rating}/5
                 </span>
               </div>
@@ -179,25 +160,43 @@ export default async function UniversityPage({
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed text-lg">
-                    {uni.desc}
+                    {/* ✅ Используем uni.description */}
+                    {uni.description}
                   </p>
                   <div className="mt-8 grid grid-cols-2 gap-4">
+                    {/* Используем актуальные данные из API, если есть, или оставляем статику */}
                     <div className="p-6 bg-universe-cyan/10 rounded-2xl border border-universe-cyan/20">
                       <h3 className="font-bold text-universe-cyan text-3xl mb-1">
-                        98%
+                        {/* ✅ Используем uni.focus */}
+                        {uni.focus}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        Трудоустройство выпускников
+                        Ключевой профиль
                       </p>
                     </div>
-                    <div className="p-6 bg-universe-purple/10 rounded-2xl border border-universe-purple/20">
-                      <h3 className="font-bold text-universe-purple text-3xl mb-1">
-                        40+
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Вузов-партнеров по миру
-                      </p>
-                    </div>
+                    {features.map((feature, i) => (
+                      <div
+                        key={i}
+                        className={`p-6 ${
+                          feature.bgColor
+                        } rounded-2xl border ${feature.bgColor.replace(
+                          "/10",
+                          "/20"
+                        )}`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <feature.icon
+                            className={`h-5 w-5 ${feature.color}`}
+                          />
+                          <h3 className={`font-bold ${feature.color} text-2xl`}>
+                            {feature.value}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {feature.label}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -210,17 +209,25 @@ export default async function UniversityPage({
                   <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
                     <Phone className="h-5 w-5 text-universe-cyan" />
                     <span className="font-medium text-foreground">
+                      {/* ✅ Используем uni.contacts */}
                       {uni.contacts}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
                     <Globe className="h-5 w-5 text-universe-cyan" />
-                    <span className="text-universe-purple cursor-pointer hover:underline font-medium">
-                      www.website.kz
-                    </span>
+                    <a
+                      href={`http://${uni.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-universe-purple cursor-pointer hover:underline font-medium"
+                    >
+                      {/* ✅ Используем uni.website */}
+                      {uni.website}
+                    </a>
                   </div>
                   <div className="aspect-video bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground text-sm border border-border/50">
-                    <MapPin className="h-4 w-4 mr-2" /> Карта (Google Maps)
+                    <MapPin className="h-4 w-4 mr-2" /> Карта (
+                    {uni.location.split(",")[0].trim()})
                   </div>
                 </CardContent>
               </Card>
@@ -237,6 +244,7 @@ export default async function UniversityPage({
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
+                  {/* ✅ Используем uni.programs */}
                   {uni.programs.map((prog: string, i: number) => (
                     <div
                       key={i}
@@ -274,6 +282,7 @@ export default async function UniversityPage({
                       </p>
                     </div>
                     <span className="text-2xl font-bold text-universe-purple">
+                      {/* ✅ Используем uni.price */}
                       {uni.price}
                     </span>
                   </div>

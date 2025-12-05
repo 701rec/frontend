@@ -1,62 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import ModernUniCard from "@/components/ModernUniCard";
 
-const universities = [
-  {
-    id: "iitu",
-    name: "International IT University",
-    short: "IITU (МУИТ)",
-    type: "IT & Инжиниринг",
-    price: "1.2 млн ₸",
-    rating: 4.9,
-    loc: "Алматы",
-    img: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "kbtu",
-    name: "Kazakh-British Technical Univ",
-    short: "KBTU (КБТУ)",
-    type: "Технический",
-    price: "1.8 млн ₸",
-    rating: 4.8,
-    loc: "Алматы",
-    img: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "nu",
-    name: "Nazarbayev University",
-    short: "NU (НУ)",
-    type: "Исследовательский",
-    price: "Грант",
-    rating: 5.0,
-    loc: "Астана",
-    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: "sdu",
-    name: "Suleyman Demirel University",
-    short: "SDU (СДУ)",
-    type: "Гуманитарно-Tech",
-    price: "1.4 млн ₸",
-    rating: 4.7,
-    loc: "Каскелен",
-    img: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80",
-  },
-];
+import ModernUniCard from "@/components/ModernUniCard";
+import { getUniversities, University } from "@/api/api";
 
 export default function UniversitiesList() {
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filtered = universities.filter(
-    (u) =>
-      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.short.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    async function fetchUnis() {
+      setIsLoading(true);
+      const data = await getUniversities();
+      setUniversities(data);
+      setIsLoading(false);
+    }
+    fetchUnis();
+  }, []);
+
+  const filtered = universities.filter((u) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      u.name.toLowerCase().includes(query) ||
+      u.shortName.toLowerCase().includes(query) ||
+      u.location.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -100,24 +75,48 @@ export default function UniversitiesList() {
       </div>
 
       <div className="container mx-auto px-4 -mt-12 relative z-20 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filtered.map((u) => (
-            <ModernUniCard key={u.id} u={u} />
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-20 bg-card/50 backdrop-blur rounded-3xl mt-6 shadow-sm border border-border/50">
-            <p className="text-xl text-muted-foreground">
-              По запросу {'"'}{searchQuery}{'"'} ничего не найдено.
+        {isLoading ? (
+          <div className="text-center py-20">
+            <p className="text-xl text-universe-purple animate-pulse">
+              Загрузка списка университетов...
             </p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="text-universe-purple font-bold mt-2 hover:underline hover:text-universe-pink transition-colors"
-            >
-              Сбросить фильтры
-            </button>
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filtered.map((u) => (
+                <ModernUniCard
+                  key={u.id}
+                  u={{
+                    id: u.id.toString(),
+                    name: u.name,
+                    short: u.shortName,
+                    type: u.type,
+                    price: u.price,
+                    rating: u.rating,
+                    loc: u.location.split(",")[0].trim(),
+                    img: u.imageUrl,
+                  }}
+                />
+              ))}
+            </div>
+
+            {filtered.length === 0 && (
+              <div className="text-center py-20 bg-card/50 backdrop-blur rounded-3xl mt-6 shadow-sm border border-border/50">
+                <p className="text-xl text-muted-foreground">
+                  По запросу {'"'}
+                  {searchQuery}
+                  {'"'} ничего не найдено.
+                </p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="text-universe-purple font-bold mt-2 hover:underline hover:text-universe-pink transition-colors"
+                >
+                  Сбросить фильтры
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

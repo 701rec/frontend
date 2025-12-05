@@ -7,8 +7,16 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import { generateAIResponse, API_URL } from "@/api/ai-api";
+
+interface Message {
+  id: number;
+  role: "user" | "assistant";
+  content: string;
+}
+
 export default function AIPage() {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       role: "assistant",
@@ -26,70 +34,81 @@ export default function AIPage() {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-    const userMsg = { id: Date.now(), role: "user", content: input };
+    if (!input.trim() || isLoading) return;
+
+    const userMsg: Message = { id: Date.now(), role: "user", content: input };
+
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
-    setTimeout(() => {
-      let response =
-        "Я пока учусь, но могу подсказать по основным вузам Алматы.";
-      const lower = userMsg.content.toLowerCase();
-
-      if (lower.includes("муит") || lower.includes("iitu"))
-        response =
-          "**IITU (МУИТ)** 💻\n\n• **Цена:** ~1.2 млн тг/год\n• **Профиль:** IT, Кибербезопасность, Телеком\n• **Общежитие:** Есть (Дом Студентов)";
-      else if (lower.includes("кбту") || lower.includes("kbtu"))
-        response =
-          "**KBTU (КБТУ)** 🇬🇧\n\n• **Цена:** ~1.8 млн тг/год\n• **Профиль:** Нефтегаз, IT, Бизнес\n• **Особенность:** Обучение на английском";
-      else if (lower.includes("грант"))
-        response =
-          "В 2025 году выделено **78 000 грантов**.\n\nПроходные баллы:\n• IT: 100+\n• Инженерия: 85+\n• Педагогика: 75+";
-      else if (lower.includes("привет"))
-        response =
-          "Привет! Готов помочь с поступлением. Какой город рассматриваешь?";
+    try {
+      const assistantResponse = await generateAIResponse(userMsg.content);
 
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: "assistant", content: response },
+        { id: Date.now() + 1, role: "assistant", content: assistantResponse },
       ]);
+    } catch (error) {
+      console.error("AI Fetch Error:", error);
+
+      const errorMessage =
+        error instanceof Error && error.message.includes("API Error")
+          ? `Ошибка: ${error.message}. Проверьте статус бэкенда.`
+          : `Ошибка: Не удалось подключиться к AI-сервису по адресу ${API_URL}. Проверьте, запущен ли бэкенд.`;
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "assistant",
+          content: errorMessage,
+        },
+      ]);
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
+  };
+
+  const handleClear = () => {
+    setMessages([]);
   };
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)] bg-background transition-colors duration-300">
-      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 px-6 py-3 flex items-center justify-between shadow-sm sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-tr from-universe-purple to-universe-cyan p-2.5 rounded-xl shadow-lg shadow-universe-purple/20">
-            <Sparkles className="h-5 w-5 text-white" />
+      {/* HEADER: Обновлен для центрирования контента */}
+      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-center shadow-sm sticky top-0 z-10">
+        <div className="max-w-3xl w-full flex items-center justify-between mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-tr from-universe-purple to-universe-cyan p-2.5 rounded-xl shadow-lg shadow-universe-purple/20">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="font-bold text-foreground text-lg leading-none mb-1">
+                UniVerse AI
+              </h1>
+              <p className="text-xs text-universe-cyan flex items-center gap-1.5 font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-universe-cyan opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-universe-cyan"></span>
+                </span>
+                Online
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-bold text-foreground text-lg leading-none mb-1">
-              UniVerse AI
-            </h1>
-            <p className="text-xs text-universe-cyan flex items-center gap-1.5 font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-universe-cyan opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-universe-cyan"></span>
-              </span>
-              Online
-            </p>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span className="hidden sm:inline">Очистить</span>
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMessages([])}
-          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2"
-        >
-          <Trash2 className="h-4 w-4" />
-          <span className="hidden sm:inline">Очистить</span>
-        </Button>
       </div>
 
-      <ScrollArea className="flex-1 p-4 md:p-6 bg-secondary/5">
+      <ScrollArea className="flex-1 p-4 md:p-6 bg-background">
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.map((m) => (
             <div
@@ -157,6 +176,13 @@ export default function AIPage() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Спросите про гранты или вузы..."
               className="pl-5 pr-14 py-6 rounded-full border-border bg-secondary/30 focus:bg-background focus:border-universe-purple transition-all shadow-inner text-base"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              disabled={isLoading}
             />
             <Button
               type="submit"
