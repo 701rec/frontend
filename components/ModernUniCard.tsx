@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, ArrowUpRight } from "lucide-react";
@@ -15,6 +18,17 @@ interface UniCardProps {
 }
 
 export default function ModernUniCard({ u }: { u: UniCardProps }) {
+  // 1. Ссылка на картинку-заглушку (можешь заменить на путь к своему локальному файлу, например '/images/no-image.png')
+  const fallbackImage = "/notfound.jpg";
+
+  // 2. Состояние для текущей картинки. Изначально берем ту, что пришла в пропсах.
+  const [imgSrc, setImgSrc] = useState(u.img);
+
+  // 3. Если проп u.img изменится (например, при фильтрации), обновляем состояние
+  useEffect(() => {
+    setImgSrc(u.img);
+  }, [u.img]);
+
   return (
     <Link
       href={`/universities/${u.id}`}
@@ -22,12 +36,19 @@ export default function ModernUniCard({ u }: { u: UniCardProps }) {
     >
       <div className="relative h-full bg-card rounded-3xl overflow-hidden border border-border/50 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-universe-purple/10 hover:-translate-y-1 hover:border-universe-purple/50 flex flex-col">
         <div className="relative h-56 overflow-hidden">
-          <Image
-            src={u.img}
-            alt={u.short}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-          />
+          <div className="relative h-64 w-full group">
+            <Image
+              // Используем imgSrc из состояния. Если пришла пустая строка — сразу ставим заглушку.
+              src={imgSrc || fallbackImage}
+              alt={u.short}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              // 4. ГЛАВНОЕ: Если картинка не загрузилась (404), меняем src на заглушку
+              onError={() => setImgSrc(fallbackImage)}
+              // Опционально: отключаем оптимизацию для заглушки, если это внешний url
+              unoptimized={imgSrc === fallbackImage}
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
           <div className="absolute top-4 left-4">

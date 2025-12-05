@@ -34,30 +34,39 @@ export async function getUniversities(): Promise<University[]> {
   }
 }
 
-// ✅ НОВАЯ ФУНКЦИЯ: Получение одного университета по ID
+// Описываем тип данных, который приходит с бэкенда
+// Важно: поля должны совпадать с тем, что ты используешь в компоненте!
+
+// Функция получения данных
 export async function getUniversityById(
   id: string
 ): Promise<University | null> {
-  const API_URL = `http://192.168.8.31:8080/api/universities/${id}`;
+  // Твой локальный IP и порт
+  const BASE_URL = "http://192.168.8.31:8080";
 
   try {
-    const response = await fetch(API_URL, {
-      // Используем cache: 'no-store' для свежих данных или 'force-cache' для статических
+    // Выводим лог в терминал (где запущен npm run dev), чтобы видеть, что происходит
+    console.log(
+      `📡 Запрос данных для ID: ${id} по адресу ${BASE_URL}/api/universities/${id}`
+    );
+
+    const res = await fetch(`${BASE_URL}/api/universities/${id}`, {
+      // 'no-store' означает, что Next.js не будет кэшировать запрос.
+      // Это важно при разработке, чтобы видеть свежие данные.
       cache: "no-store",
     });
 
-    if (response.status === 404) {
-      return null; // Университет не найден
+    if (!res.ok) {
+      console.error(`❌ Ошибка запроса: ${res.status} ${res.statusText}`);
+      return null;
     }
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const data = await res.json();
+    console.log("✅ Данные получены успешно");
 
-    const data: University = await response.json();
     return data;
   } catch (error) {
-    console.error(`Error fetching university with ID ${id}:`, error);
+    console.error("🔥 Ошибка сети или парсинга:", error);
     return null;
   }
 }

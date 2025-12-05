@@ -1,3 +1,7 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 import { ArrowLeft, GraduationCap, Sparkles, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleDemoLogin = () => {
+    login();
+    router.push("/profile");
+  };
+
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background transition-colors duration-300">
@@ -26,17 +38,15 @@ export default function LoginPage() {
           </div>
 
           <div className="grid gap-4">
-            {/* --- КНОПКА ДЛЯ ЖЮРИ (БЫСТРЫЙ ВХОД) --- */}
-            <Link href="/profile" className="w-full">
-              <Button
-                variant="outline"
-                className="w-full gap-2 border-universe-purple/50 text-universe-purple hover:bg-universe-purple/10 hover:text-universe-purple h-12 font-semibold relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-universe-purple/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300" />
-                <Sparkles className="h-4 w-4" />
-                Демо вход (Для Жюри)
-              </Button>
-            </Link>
+            <Button
+              onClick={handleDemoLogin}
+              variant="outline"
+              className="w-full gap-2 border-universe-purple/50 text-universe-purple hover:bg-universe-purple/10 hover:text-universe-purple h-12 font-semibold relative overflow-hidden group animate-pulse"
+            >
+              <div className="absolute inset-0 bg-universe-purple/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300" />
+              <Sparkles className="h-4 w-4" />
+              Демо вход (Для Жюри)
+            </Button>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -64,7 +74,7 @@ export default function LoginPage() {
                 <Label htmlFor="password">Пароль</Label>
                 <Link
                   href="#"
-                  className="ml-auto inline-block text-xs underline text-universe-purple hover:text-universe-pink transition-colors"
+                  className="cursor-not-allowed ml-auto inline-block text-xs underline text-universe-purple hover:text-universe-pink transition-colors"
                 >
                   Забыли пароль?
                 </Link>
@@ -77,10 +87,10 @@ export default function LoginPage() {
               />
             </div>
 
-            <Link href="/profile" className="w-full">
+            <Link href="#" className="w-full">
               <Button
                 type="submit"
-                className="w-full bg-universe-purple hover:bg-universe-purple/90 text-white shadow-lg shadow-universe-purple/20 transition-all"
+                className="cursor-not-allowed w-full bg-universe-purple hover:bg-universe-purple/90 text-white shadow-lg shadow-universe-purple/20 transition-all"
               >
                 Войти
               </Button>
@@ -88,10 +98,10 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Нет аккаунта?
+            Нет аккаунта?{" "}
             <Link
               href="#"
-              className="underline text-universe-purple hover:text-universe-pink transition-colors font-medium"
+              className="cursor-not-allowed underline text-universe-purple hover:text-universe-pink transition-colors font-medium"
             >
               Зарегистрироваться
             </Link>

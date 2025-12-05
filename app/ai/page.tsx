@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Bot, User, Trash2 } from "lucide-react";
+import { Send, Sparkles, Bot, User, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { generateAIResponse, API_URL } from "@/api/ai-api";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 interface Message {
   id: number;
@@ -16,6 +17,10 @@ interface Message {
 }
 
 export default function AIPage() {
+  const { isLogin, isLoading } = useAuth();
+  const router = useRouter();
+
+  // --- ХУКИ ---
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -25,33 +30,37 @@ export default function AIPage() {
     },
   ]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isLoading && !isLogin) {
+      router.push("/login");
+    }
+  }, [isLogin, isLoading, router]);
 
   useEffect(() => {
     if (scrollRef.current)
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+  }, [messages, isAiLoading]);
 
+  // --- ЛОГИКА ---
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isAiLoading) return;
 
     const userMsg: Message = { id: Date.now(), role: "user", content: input };
-
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    setIsLoading(true);
+    setIsAiLoading(true);
 
     try {
       const assistantResponse = await generateAIResponse(userMsg.content);
-
       setMessages((prev) => [
         ...prev,
         { id: Date.now() + 1, role: "assistant", content: assistantResponse },
       ]);
     } catch (error) {
       console.error("AI Fetch Error:", error);
-
       const errorMessage =
         error instanceof Error && error.message.includes("API Error")
           ? `Ошибка: ${error.message}. Проверьте статус бэкенда.`
@@ -59,14 +68,10 @@ export default function AIPage() {
 
       setMessages((prev) => [
         ...prev,
-        {
-          id: Date.now() + 1,
-          role: "assistant",
-          content: errorMessage,
-        },
+        { id: Date.now() + 1, role: "assistant", content: errorMessage },
       ]);
     } finally {
-      setIsLoading(false);
+      setIsAiLoading(false);
     }
   };
 
@@ -74,10 +79,23 @@ export default function AIPage() {
     setMessages([]);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex h-[calc(100vh-5rem)] w-full items-center justify-center bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-universe-purple" />
+      </div>
+    );
+  }
+
+  if (!isLogin) return null;
+
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-background transition-colors duration-300">
-      {/* HEADER: Обновлен для центрирования контента */}
-      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-center shadow-sm sticky top-0 z-10">
+    // ГЛАВНЫЙ КОНТЕЙНЕР
+    // h-[calc(100vh-5rem)] -> 100% высоты экрана минус 5rem (80px - высота Navbar)
+    // overflow-hidden -> предотвращает скролл самой страницы
+    <div className="flex flex-col h-[calc(100vh-5rem)] bg-background transition-colors duration-300 overflow-hidden">
+      {/* 1. ХЕДЕР ЧАТА (фиксированная высота, не сжимается) */}
+      <div className="flex-none bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-center shadow-sm z-10">
         <div className="max-w-3xl w-full flex items-center justify-between mx-auto">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-tr from-universe-purple to-universe-cyan p-2.5 rounded-xl shadow-lg shadow-universe-purple/20">
@@ -108,8 +126,9 @@ export default function AIPage() {
         </div>
       </div>
 
-      <ScrollArea className="flex-1 p-4 md:p-6 bg-background">
-        <div className="max-w-3xl mx-auto space-y-6">
+      {/* 2. ОБЛАСТЬ СООБЩЕНИЙ (flex-1 занимает все доступное место) */}
+      <ScrollArea className="flex-1 w-full bg-background">
+        <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -117,7 +136,7 @@ export default function AIPage() {
                 m.role === "user" ? "flex-row-reverse" : ""
               }`}
             >
-              <Avatar className="h-10 w-10 border border-border shadow-sm">
+              <Avatar className="h-10 w-10 border border-border shadow-sm flex-shrink-0">
                 <AvatarImage
                   src={m.role === "user" ? "/user.png" : "/bot.png"}
                 />
@@ -144,9 +163,9 @@ export default function AIPage() {
             </div>
           ))}
 
-          {isLoading && (
+          {isAiLoading && (
             <div className="flex gap-4 animate-in fade-in duration-300">
-              <Avatar className="h-10 w-10 border border-border">
+              <Avatar className="h-10 w-10 border border-border flex-shrink-0">
                 <AvatarFallback className="bg-universe-cyan text-universe-dark">
                   <Bot size={18} />
                 </AvatarFallback>
@@ -158,11 +177,12 @@ export default function AIPage() {
               </div>
             </div>
           )}
-          <div ref={scrollRef} />
+          <div ref={scrollRef} className="pb-2" />
         </div>
       </ScrollArea>
 
-      <div className="p-4 bg-background/80 backdrop-blur-md border-t border-border/40">
+      {/* 3. ОБЛАСТЬ ВВОДА (фиксированная высота, прижата к низу) */}
+      <div className="flex-none p-4 bg-background/80 backdrop-blur-md border-t border-border/40">
         <div className="max-w-3xl mx-auto relative">
           <form
             onSubmit={(e) => {
@@ -182,12 +202,12 @@ export default function AIPage() {
                   handleSend();
                 }
               }}
-              disabled={isLoading}
+              disabled={isAiLoading}
             />
             <Button
               type="submit"
               size="icon"
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isAiLoading}
               className="absolute right-2 top-1.5 h-9 w-9 rounded-full bg-universe-purple hover:bg-universe-purple/90 text-white transition-transform hover:scale-105 shadow-md shadow-universe-purple/20"
             >
               <Send className="h-4 w-4" />

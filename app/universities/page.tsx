@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import ModernUniCard from "@/components/ModernUniCard";
+import UniCardSkeleton from "@/components/skeletons/UniCardSkeleton";
 import { getUniversities, University } from "@/api/api";
 
 export default function UniversitiesList() {
@@ -76,10 +75,10 @@ export default function UniversitiesList() {
 
       <div className="container mx-auto px-4 -mt-12 relative z-20 pb-20">
         {isLoading ? (
-          <div className="text-center py-20">
-            <p className="text-xl text-universe-purple animate-pulse">
-              Загрузка списка университетов...
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 11 }).map((_, index) => (
+              <UniCardSkeleton key={index} />
+            ))}
           </div>
         ) : (
           <>
@@ -104,9 +103,7 @@ export default function UniversitiesList() {
             {filtered.length === 0 && (
               <div className="text-center py-20 bg-card/50 backdrop-blur rounded-3xl mt-6 shadow-sm border border-border/50">
                 <p className="text-xl text-muted-foreground">
-                  По запросу {'"'}
-                  {searchQuery}
-                  {'"'} ничего не найдено.
+                  По запросу &quot;{searchQuery}&quot; ничего не найдено.
                 </p>
                 <button
                   onClick={() => setSearchQuery("")}

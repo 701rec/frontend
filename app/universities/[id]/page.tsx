@@ -9,7 +9,7 @@ import {
   BookOpen,
   Hotel,
   Shield,
-} from "lucide-react"; // Добавил Hotel и Shield
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,34 +20,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getUniversityById } from "@/api/api";
+import { getUniversityById, type University } from "@/api/api";
 import { notFound } from "next/navigation";
-import { type University } from "@/api/api";
-
-// ✅ Импортируем функцию API и тип
-
-// Удаляем локальный объект universitiesDB, он больше не нужен.
-// const universitiesDB: Record<string, any> = { ... };
 
 export default async function UniversityPage({
   params,
 }: {
-  // ✅ ИСПРАВЛЕНИЕ: params - это просто объект
-  params: { id: string };
+  // ✅ ИСПРАВЛЕНИЕ ДЛЯ NEXT.JS 15: params теперь Promise
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params; //
+  // ✅ ИСПРАВЛЕНИЕ: Ждем разрешения промиса перед использованием id
+  const { id } = await params;
 
-  // ✅ 1. Получаем данные асинхронно с сервера
+  // 1. Получаем данные с сервера
   const uni: University | null = await getUniversityById(id);
+
+  // 2. Если университет не найден — показываем страницу 404
   if (!uni) {
     notFound();
   }
-  // 2. Обработка случая, когда университет не найден (404)
 
-  // 3. Адаптация данных API к используемому в JSX (для краткости и удобства)
-  // Мы используем поля uni.* напрямую
-
-  // Дополнительные свойства для вкладки "Об университете"
+  // 3. Подготовка данных для иконок (общежитие/военная кафедра)
   const features = [
     {
       label: "Общежитие",
@@ -67,10 +60,10 @@ export default async function UniversityPage({
 
   return (
     <div className="min-h-screen bg-background pb-10 transition-colors duration-300">
+      {/* Хедер с фоновым изображением */}
       <div className="relative h-64 md:h-96 bg-universe-indigo overflow-hidden">
         <Image
-          // ✅ Используем uni.imageUrl
-          src={uni.imageUrl}
+          src={uni.imageUrl || "/placeholder.jpg"} // Fallback, если картинки нет
           alt={uni.name}
           fill
           className="object-cover opacity-40"
@@ -87,7 +80,6 @@ export default async function UniversityPage({
             <div>
               <div className="flex gap-2 mb-3">
                 <Badge className="bg-universe-cyan text-universe-dark hover:bg-universe-cyan/80 font-bold border-none">
-                  {/* Используем uni.type */}
                   {uni.type}
                 </Badge>
                 <Badge
@@ -98,18 +90,15 @@ export default async function UniversityPage({
                 </Badge>
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-md">
-                {/* ✅ Используем uni.shortName */}
                 {uni.shortName}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-slate-200 text-sm md:text-base font-medium">
                 <span className="flex items-center gap-1">
                   <MapPin className="h-4 w-4 text-universe-cyan" />{" "}
-                  {/* ✅ Используем uni.location */}
                   {uni.location}
                 </span>
                 <span className="flex items-center gap-1">
                   <Award className="h-4 w-4 text-yellow-400" /> Рейтинг:{" "}
-                  {/* ✅ Используем uni.rating */}
                   {uni.rating}/5
                 </span>
               </div>
@@ -129,6 +118,7 @@ export default async function UniversityPage({
         </div>
       </div>
 
+      {/* Основной контент с табами */}
       <div className="container mx-auto px-4 py-8 -mt-6 relative z-10">
         <Tabs defaultValue="about" className="w-full">
           <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
@@ -152,6 +142,7 @@ export default async function UniversityPage({
             </TabsTrigger>
           </TabsList>
 
+          {/* Вкладка: Об университете */}
           <TabsContent value="about" className="mt-8">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-2 border-border/50 bg-card shadow-sm">
@@ -160,14 +151,11 @@ export default async function UniversityPage({
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed text-lg">
-                    {/* ✅ Используем uni.description */}
                     {uni.description}
                   </p>
                   <div className="mt-8 grid grid-cols-2 gap-4">
-                    {/* Используем актуальные данные из API, если есть, или оставляем статику */}
                     <div className="p-6 bg-universe-cyan/10 rounded-2xl border border-universe-cyan/20">
                       <h3 className="font-bold text-universe-cyan text-3xl mb-1">
-                        {/* ✅ Используем uni.focus */}
                         {uni.focus}
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -209,19 +197,21 @@ export default async function UniversityPage({
                   <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
                     <Phone className="h-5 w-5 text-universe-cyan" />
                     <span className="font-medium text-foreground">
-                      {/* ✅ Используем uni.contacts */}
                       {uni.contacts}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
                     <Globe className="h-5 w-5 text-universe-cyan" />
                     <a
-                      href={`http://${uni.website}`}
+                      href={
+                        uni.website.startsWith("http")
+                          ? uni.website
+                          : `http://${uni.website}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-universe-purple cursor-pointer hover:underline font-medium"
                     >
-                      {/* ✅ Используем uni.website */}
                       {uni.website}
                     </a>
                   </div>
@@ -234,6 +224,7 @@ export default async function UniversityPage({
             </div>
           </TabsContent>
 
+          {/* Вкладка: Программы */}
           <TabsContent value="programs" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
@@ -244,25 +235,31 @@ export default async function UniversityPage({
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {/* ✅ Используем uni.programs */}
-                  {uni.programs.map((prog: string, i: number) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-4 p-5 border border-border/50 rounded-2xl hover:border-universe-cyan hover:shadow-md transition cursor-pointer group bg-card"
-                    >
-                      <div className="h-12 w-12 bg-universe-cyan/10 text-universe-cyan rounded-full flex items-center justify-center group-hover:bg-universe-cyan group-hover:text-universe-dark transition">
-                        <BookOpen className="h-6 w-6" />
+                  {uni.programs && uni.programs.length > 0 ? (
+                    uni.programs.map((prog: string, i: number) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-4 p-5 border border-border/50 rounded-2xl hover:border-universe-cyan hover:shadow-md transition cursor-pointer group bg-card"
+                      >
+                        <div className="h-12 w-12 bg-universe-cyan/10 text-universe-cyan rounded-full flex items-center justify-center group-hover:bg-universe-cyan group-hover:text-universe-dark transition">
+                          <BookOpen className="h-6 w-6" />
+                        </div>
+                        <span className="font-bold text-foreground group-hover:text-universe-purple transition-colors">
+                          {prog}
+                        </span>
                       </div>
-                      <span className="font-bold text-foreground group-hover:text-universe-purple transition-colors">
-                        {prog}
-                      </span>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Список программ уточняется
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Вкладка: Поступление */}
           <TabsContent value="admission" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
@@ -282,7 +279,6 @@ export default async function UniversityPage({
                       </p>
                     </div>
                     <span className="text-2xl font-bold text-universe-purple">
-                      {/* ✅ Используем uni.price */}
                       {uni.price}
                     </span>
                   </div>
