@@ -20,30 +20,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  getUniversityById,
-} from "@/services/university.service";
+import { getUniversityById } from "@/services/university.service";
 import { notFound } from "next/navigation";
 import { University } from "@/types/university";
 
 export default async function UniversityPage({
   params,
 }: {
-  // ✅ ИСПРАВЛЕНИЕ ДЛЯ NEXT.JS 15: params теперь Promise
   params: Promise<{ id: string }>;
 }) {
-  // ✅ ИСПРАВЛЕНИЕ: Ждем разрешения промиса перед использованием id
   const { id } = await params;
 
-  // 1. Получаем данные с сервера
   const uni: University | null = await getUniversityById(id);
 
-  // 2. Если университет не найден — показываем страницу 404
   if (!uni) {
     notFound();
   }
 
-  // 3. Подготовка данных для иконок (общежитие/военная кафедра)
   const features = [
     {
       label: "Общежитие",
@@ -63,10 +56,9 @@ export default async function UniversityPage({
 
   return (
     <div className="min-h-screen bg-background pb-10 transition-colors duration-300">
-      {/* Хедер с фоновым изображением */}
       <div className="relative h-64 md:h-96 bg-universe-indigo overflow-hidden">
         <Image
-          src={uni.imageUrl || "/placeholder.jpg"} // Fallback, если картинки нет
+          src={uni.imageUrl || "/placeholder.jpg"}
           alt={uni.name}
           fill
           className="object-cover opacity-40"
@@ -121,7 +113,6 @@ export default async function UniversityPage({
         </div>
       </div>
 
-      {/* Основной контент с табами */}
       <div className="container mx-auto px-4 py-8 -mt-6 relative z-10">
         <Tabs defaultValue="about" className="w-full">
           <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
@@ -145,7 +136,6 @@ export default async function UniversityPage({
             </TabsTrigger>
           </TabsList>
 
-          {/* Вкладка: Об университете */}
           <TabsContent value="about" className="mt-8">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-2 border-border/50 bg-card shadow-sm">
@@ -227,7 +217,6 @@ export default async function UniversityPage({
             </div>
           </TabsContent>
 
-          {/* Вкладка: Программы */}
           <TabsContent value="programs" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
@@ -262,7 +251,6 @@ export default async function UniversityPage({
             </Card>
           </TabsContent>
 
-          {/* Вкладка: Поступление */}
           <TabsContent value="admission" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>

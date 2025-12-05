@@ -19,7 +19,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-// 2. SEO Метаданные
 export const metadata: Metadata = {
   metadataBase: new URL("https://universe.lat/"),
 

@@ -59,7 +59,7 @@ export default function UniversitiesList() {
 
           <div className="max-w-2xl mx-auto flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-3.5 h-5 w-5 text-muted-foreground" />
+              <Search className="absolute z-10 left-4 top-3.5 h-5 w-5 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

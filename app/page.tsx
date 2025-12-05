@@ -66,22 +66,17 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       <section className="relative py-20 lg:py-32 overflow-hidden">
-        {/* === 3D ЭФФЕКТЫ: Анимированные размытые фигуры === */}
-        {/* Фигура 1: Пурпурный, верхний правый. Анимация float-1 */}
         <div
           className={`absolute top-0 right-0 w-[600px] h-[600px] bg-universe-purple/30 rounded-full blur-[120px] opacity-50 translate-x-1/3 -translate-y-1/4 animate-float-1`}
         ></div>
 
-        {/* Фигура 2: Голубой, нижний левый. Анимация float-2 */}
         <div
           className={`absolute bottom-0 left-0 w-[400px] h-[400px] bg-universe-cyan/30 rounded-full blur-[100px] opacity-40 -translate-x-1/4 translate-y-1/4 animate-float-2`}
         ></div>
 
-        {/* НОВАЯ Фигура 3: Индиго, в центре. Анимация float-3 */}
         <div
           className={`absolute top-1/2 left-1/2 w-64 h-64 bg-universe-indigo/20 rounded-full blur-[80px] opacity-30 transform -translate-x-1/2 -translate-y-1/2 animate-float-3 hidden lg:block`}
         ></div>
-        {/* ================================================= */}
 
         <div className="container relative z-10 px-4 mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-universe-purple/10 text-universe-purple border border-universe-purple/20 text-sm font-medium mb-8 backdrop-blur-sm">

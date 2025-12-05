@@ -82,12 +82,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Убрали сетку отсюда, теперь чисто */
   }
 }
-/* ^^^ ВОТ ЗДЕСЬ СКОРЕЕ ВСЕГО БЫЛА ПОТЕРЯНА СКОБКА */
 
-/* Новый класс для сетки (используется в GridBackground.tsx) */
 .bg-grid-pattern {
   background-image: linear-gradient(
       to right,
@@ -99,7 +96,6 @@
   background-attachment: fixed;
 }
 
-/* Анимации */
 @keyframes float1 {
   0% {
     transform: translate(33%, -25%);
@@ -158,8 +154,7 @@
   border: none;
 }
 
-/* Для Firefox и IE */
 * {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }

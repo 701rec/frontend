@@ -16,29 +16,6 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const universitiesData = [
   {
-    id: 1,
-    name: "IITU (МУИТ)",
-    logo: "IT",
-    color: "text-universe-cyan bg-universe-cyan/10 border-universe-cyan/20",
-    price: "1 200 000 ₸",
-    rating: 4.8,
-    military: true,
-    dorm: true,
-    focus: "IT & Engineering",
-  },
-  {
-    id: 2,
-    name: "KBTU (КБТУ)",
-    logo: "KB",
-    color:
-      "text-universe-purple bg-universe-purple/10 border-universe-purple/20",
-    price: "1 800 000 ₸",
-    rating: 4.9,
-    military: true,
-    dorm: true,
-    focus: "Oil & Gas, IT",
-  },
-  {
     id: 3,
     name: "AUPET (АУЭС)",
     logo: "AU",
@@ -48,7 +25,7 @@ const universitiesData = [
     military: true,
     dorm: false,
     focus: "Energy & Telecom",
-  },
+  }
 ];
 
 export default function ComparePage() {

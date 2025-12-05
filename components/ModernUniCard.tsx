@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, MapPin, ArrowUpRight } from "lucide-react";
+import { Star, MapPin, ArrowUpRight, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface UniCardProps {
@@ -19,6 +19,7 @@ interface UniCardProps {
 
 export default function ModernUniCard({ u }: { u: UniCardProps }) {
   const fallbackImage = "/notfound.jpg";
+  const [isPressed, setIsPressed] = useState(false);
 
   const [imgSrc, setImgSrc] = useState(u.img);
 
@@ -54,6 +55,30 @@ export default function ModernUniCard({ u }: { u: UniCardProps }) {
           <div className="absolute top-4 right-4 flex items-center gap-1 bg-background/90 backdrop-blur-md px-2.5 py-1 rounded-full text-foreground font-bold text-xs shadow-sm">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />{" "}
             {u.rating}
+          </div>
+
+          <div className="absolute bottom-3 left-3 z-20">
+            <button
+              className="bg-background/90 backdrop-blur-md p-2 rounded-full shadow-sm border border-border/50 
+               hover:bg-background transition-colors active:scale-90"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={() => setIsPressed(true)}
+              onMouseUp={() => setIsPressed(false)}
+              onMouseLeave={() => setIsPressed(false)}
+            >
+              <Heart
+                className={`h-4 w-4 transition-all duration-200 ${
+                  isPressed
+                    ? "text-red-500 fill-red-500 scale-90"
+                    : "text-universe-purple stroke-universe-purple scale-100"
+                }`}
+                fill={isPressed ? "currentColor" : "none"}
+                strokeWidth={1.5}
+              />
+            </button>
           </div>
         </div>
 
