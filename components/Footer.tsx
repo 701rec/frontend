@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { GraduationCap, Send, Instagram, Linkedin } from "lucide-react";
+import { Send, Instagram, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -9,8 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="bg-universe-purple/10 p-2 rounded-lg text-universe-purple group-hover:bg-universe-purple group-hover:text-white transition-colors duration-300">
-                <GraduationCap className="h-6 w-6" />
+              <div className="relative h-10 w-10">
+                <Image
+                  src="/favicon.svg"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
               </div>
               <span className="text-xl font-bold tracking-tight text-foreground">
                 Uni<span className="text-universe-purple">Verse</span>

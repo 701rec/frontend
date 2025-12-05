@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { generateAIResponse, API_URL } from "@/api/ai-api";
+import { generateAIResponse } from "@/services/ai.service";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/config";
 
 interface Message {
   id: number;
@@ -20,7 +21,6 @@ export default function AIPage() {
   const { isLogin, isLoading } = useAuth();
   const router = useRouter();
 
-  // --- ХУКИ ---
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -44,7 +44,6 @@ export default function AIPage() {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages, isAiLoading]);
 
-  // --- ЛОГИКА ---
   const handleSend = async () => {
     if (!input.trim() || isAiLoading) return;
 
@@ -90,11 +89,7 @@ export default function AIPage() {
   if (!isLogin) return null;
 
   return (
-    // ГЛАВНЫЙ КОНТЕЙНЕР
-    // h-[calc(100vh-5rem)] -> 100% высоты экрана минус 5rem (80px - высота Navbar)
-    // overflow-hidden -> предотвращает скролл самой страницы
     <div className="flex flex-col h-[calc(100vh-5rem)] bg-background transition-colors duration-300 overflow-hidden">
-      {/* 1. ХЕДЕР ЧАТА (фиксированная высота, не сжимается) */}
       <div className="flex-none bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-center shadow-sm z-10">
         <div className="max-w-3xl w-full flex items-center justify-between mx-auto">
           <div className="flex items-center gap-3">
@@ -126,7 +121,6 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* 2. ОБЛАСТЬ СООБЩЕНИЙ (flex-1 занимает все доступное место) */}
       <ScrollArea className="flex-1 w-full bg-background">
         <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
           {messages.map((m) => (
@@ -181,7 +175,6 @@ export default function AIPage() {
         </div>
       </ScrollArea>
 
-      {/* 3. ОБЛАСТЬ ВВОДА (фиксированная высота, прижата к низу) */}
       <div className="flex-none p-4 bg-background/80 backdrop-blur-md border-t border-border/40">
         <div className="max-w-3xl mx-auto relative">
           <form

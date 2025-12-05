@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ModernUniCard from "@/components/ModernUniCard";
 import UniCardSkeleton from "@/components/skeletons/UniCardSkeleton";
-import { getUniversities, University } from "@/api/api";
+import { getUniversities, University } from "@/services/university.service";
 
 export default function UniversitiesList() {
   const [universities, setUniversities] = useState<University[]>([]);

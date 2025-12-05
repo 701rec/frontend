@@ -20,7 +20,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getUniversityById, type University } from "@/api/api";
+import {
+  getUniversityById,
+  type University,
+} from "@/services/university.service";
 import { notFound } from "next/navigation";
 
 export default async function UniversityPage({

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  GraduationCap,
   Sparkles,
   Menu,
   LogOut,
@@ -10,6 +9,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useAuth } from "@/hooks/useAuth";
@@ -52,8 +52,14 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-3 group transition-opacity hover:opacity-90"
         >
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-universe-purple/10 text-universe-purple group-hover:bg-universe-purple group-hover:text-white transition-colors duration-300">
-            <GraduationCap className="h-6 w-6" />
+          <div className="relative h-10 w-10">
+            <Image
+              src="/favicon.svg"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
           </div>
           <span className="text-2xl font-bold tracking-tight text-foreground">
             Uni<span className="text-universe-purple">Verse</span>
