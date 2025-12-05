@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Sparkles,
-  Menu,
-  LogOut,
-  User,
-  Settings,
-} from "lucide-react";
+import { Sparkles, Menu, LogOut, User, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -101,7 +95,6 @@ export default function Navbar() {
                   <span className="text-xs text-muted-foreground">IITU</span>
                 </div>
 
-                {/* ВЫПАДАЮЩЕЕ МЕНЮ */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer hover:opacity-80 transition-opacity ring-2 ring-universe-purple/20">
@@ -117,13 +110,11 @@ export default function Navbar() {
                     <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
                     <DropdownMenuSeparator />
 
-                    {/* Пункт: Профиль */}
                     <DropdownMenuItem onClick={() => router.push("/profile")}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Профиль</span>
                     </DropdownMenuItem>
 
-                    {/* Пункт: Настройки (можно добавить позже) */}
                     <DropdownMenuItem>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Настройки</span>
@@ -131,7 +122,6 @@ export default function Navbar() {
 
                     <DropdownMenuSeparator />
 
-                    {/* Пункт: Выйти */}
                     <DropdownMenuItem
                       onClick={handleLogout}
                       className="text-red-500 focus:text-red-500"

@@ -32,7 +32,8 @@ import {
   Save,
 } from "lucide-react";
 
-import { getUserProfile, UserProfile } from "@/services/user.service";
+import { getUserProfile } from "@/services/user.service";
+import { UserProfile } from "@/types/user";
 
 export default function ProfilePage() {
   const { logout } = useAuth();

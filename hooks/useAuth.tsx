@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
   isLogin: boolean;
-  isLoading: boolean; // 1. Добавили поле
+  isLoading: boolean;
   login: () => void;
   logout: () => void;
 };
@@ -13,19 +13,17 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // 2. Начальное состояние true
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Проверяем localStorage только один раз при загрузке
     const saved = localStorage.getItem("isLogin");
     if (saved === "true") {
       setIsLogin(true);
     }
-    setIsLoading(false); // 3. Проверка закончена, снимаем загрузку
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Сохраняем только если загрузка уже прошла (чтобы не перезатереть при инициализации)
     if (!isLoading) {
       localStorage.setItem("isLogin", isLogin.toString());
     }

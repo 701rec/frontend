@@ -18,13 +18,10 @@ interface UniCardProps {
 }
 
 export default function ModernUniCard({ u }: { u: UniCardProps }) {
-  // 1. Ссылка на картинку-заглушку (можешь заменить на путь к своему локальному файлу, например '/images/no-image.png')
   const fallbackImage = "/notfound.jpg";
 
-  // 2. Состояние для текущей картинки. Изначально берем ту, что пришла в пропсах.
   const [imgSrc, setImgSrc] = useState(u.img);
 
-  // 3. Если проп u.img изменится (например, при фильтрации), обновляем состояние
   useEffect(() => {
     setImgSrc(u.img);
   }, [u.img]);
@@ -38,14 +35,11 @@ export default function ModernUniCard({ u }: { u: UniCardProps }) {
         <div className="relative h-56 overflow-hidden">
           <div className="relative h-64 w-full group">
             <Image
-              // Используем imgSrc из состояния. Если пришла пустая строка — сразу ставим заглушку.
               src={imgSrc || fallbackImage}
               alt={u.short}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
-              // 4. ГЛАВНОЕ: Если картинка не загрузилась (404), меняем src на заглушку
               onError={() => setImgSrc(fallbackImage)}
-              // Опционально: отключаем оптимизацию для заглушки, если это внешний url
               unoptimized={imgSrc === fallbackImage}
             />
           </div>

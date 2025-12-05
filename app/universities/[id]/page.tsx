@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/card";
 import {
   getUniversityById,
-  type University,
 } from "@/services/university.service";
 import { notFound } from "next/navigation";
+import { University } from "@/types/university";
 
 export default async function UniversityPage({
   params,
