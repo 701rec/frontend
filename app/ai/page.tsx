@@ -1,26 +1,19 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import { Send, Sparkles, Bot, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-type Message = {
-  id: number;
-  role: "user" | "assistant";
-  content: string;
-};
-
 export default function AIPage() {
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState([
     {
       id: 1,
       role: "assistant",
       content:
-        "Привет! Я AI-консультант UniVerse. Я помогу подобрать университет, расскажу про гранты и сравню условия обучения. Что тебя интересует?",
+        "Привет! 👋 Я AI-консультант UniVerse.\nСпроси меня про стоимость обучения в МУИТ, гранты или общежития.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -28,137 +21,130 @@ export default function AIPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current)
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: messages.length + 1,
-      role: "user",
-      content: input,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    const userMsg = { id: Date.now(), role: "user", content: input };
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
     setTimeout(() => {
-      let aiResponseText =
-        "Я могу помочь найти информацию о вузах РК. Попробуй спросить про 'МУИТ' или 'Стоимость обучения'.";
+      let response =
+        "Я пока учусь, но могу подсказать по основным вузам Алматы.";
+      const lower = userMsg.content.toLowerCase();
 
-      const lowerInput = userMessage.content.toLowerCase();
-
-      if (lowerInput.includes("муит") || lowerInput.includes("iitu")) {
-        aiResponseText =
-          "Международный IT Университет (IITU) — лидер в подготовке IT-специалистов. \n\n💰 Стоимость: ~1.2 млн тг/год\n📍 Локация: Алматы, Манаса 34\n🏆 Рейтинг: Топ-1 по трудоустройству выпускников.\n\nХотите сравнить его с КБТУ?";
-      } else if (lowerInput.includes("кбту") || lowerInput.includes("kbtu")) {
-        aiResponseText =
-          "Казахстанско-Британский технический университет (КБТУ). \n\n💰 Стоимость: ~1.8 млн тг/год\n📍 Локация: Алматы, Толе би 59\n🇬🇧 Особенность: Дипломы Лондонской школы экономики.";
-      } else if (
-        lowerInput.includes("грант") ||
-        lowerInput.includes("бюджет")
-      ) {
-        aiResponseText =
-          "В 2025 году выделено более 70 000 грантов. Для IT специальностей проходной балл обычно выше 100. Рекомендую подавать документы в 4 вуза сразу для повышения шансов.";
-      } else if (lowerInput.includes("привет")) {
-        aiResponseText =
+      if (lower.includes("муит") || lower.includes("iitu"))
+        response =
+          "**IITU (МУИТ)** 💻\n\n• **Цена:** ~1.2 млн тг/год\n• **Профиль:** IT, Кибербезопасность, Телеком\n• **Общежитие:** Есть (Дом Студентов)";
+      else if (lower.includes("кбту") || lower.includes("kbtu"))
+        response =
+          "**KBTU (КБТУ)** 🇬🇧\n\n• **Цена:** ~1.8 млн тг/год\n• **Профиль:** Нефтегаз, IT, Бизнес\n• **Особенность:** Обучение на английском";
+      else if (lower.includes("грант"))
+        response =
+          "В 2025 году выделено **78 000 грантов**.\n\nПроходные баллы:\n• IT: 100+\n• Инженерия: 85+\n• Педагогика: 75+";
+      else if (lower.includes("привет"))
+        response =
           "Привет! Готов помочь с поступлением. Какой город рассматриваешь?";
-      }
 
-      const aiMessage: Message = {
-        id: messages.length + 2,
-        role: "assistant",
-        content: aiResponseText,
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, role: "assistant", content: response },
+      ]);
       setIsLoading(false);
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-6 h-[calc(100vh-80px)]">
-      <Card className="h-full flex flex-col shadow-lg border-slate-200">
-        <CardHeader className="border-b bg-slate-50/50">
-          <CardTitle className="flex items-center gap-2 text-blue-700">
-            <Sparkles className="h-5 w-5 text-purple-500" />
-            AI Assistant UniVerse
-          </CardTitle>
-        </CardHeader>
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-background transition-colors duration-300">
+      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 px-6 py-3 flex items-center justify-between shadow-sm sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-tr from-universe-purple to-universe-cyan p-2.5 rounded-xl shadow-lg shadow-universe-purple/20">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="font-bold text-foreground text-lg leading-none mb-1">
+              UniVerse AI
+            </h1>
+            <p className="text-xs text-universe-cyan flex items-center gap-1.5 font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-universe-cyan opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-universe-cyan"></span>
+              </span>
+              Online
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setMessages([])}
+          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2"
+        >
+          <Trash2 className="h-4 w-4" />
+          <span className="hidden sm:inline">Очистить</span>
+        </Button>
+      </div>
 
-        <CardContent className="flex-1 p-0 overflow-hidden relative">
-          <ScrollArea className="h-full p-4 pr-6">
-            <div className="flex flex-col gap-4 pb-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex gap-3 ${
-                    message.role === "user" ? "flex-row-reverse" : "flex-row"
-                  }`}
+      <ScrollArea className="flex-1 p-4 md:p-6 bg-secondary/5">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {messages.map((m) => (
+            <div
+              key={m.id}
+              className={`flex gap-4 animate-in slide-in-from-bottom-2 duration-300 ${
+                m.role === "user" ? "flex-row-reverse" : ""
+              }`}
+            >
+              <Avatar className="h-10 w-10 border border-border shadow-sm">
+                <AvatarImage
+                  src={m.role === "user" ? "/user.png" : "/bot.png"}
+                />
+                <AvatarFallback
+                  className={
+                    m.role === "user"
+                      ? "bg-universe-purple text-white"
+                      : "bg-universe-cyan text-universe-dark"
+                  }
                 >
-                  <Avatar className="h-8 w-8 mt-1 border">
-                    {message.role === "assistant" ? (
-                      <>
-                        <AvatarImage src="/bot-avatar.png" />
-                        <AvatarFallback className="bg-blue-600 text-white">
-                          <Bot size={16} />
-                        </AvatarFallback>
-                      </>
-                    ) : (
-                      <>
-                        <AvatarImage src="/user-avatar.png" />
-                        <AvatarFallback className="bg-slate-800 text-white">
-                          <User size={16} />
-                        </AvatarFallback>
-                      </>
-                    )}
-                  </Avatar>
+                  {m.role === "user" ? <User size={18} /> : <Bot size={18} />}
+                </AvatarFallback>
+              </Avatar>
 
-                  <div
-                    className={`rounded-2xl px-4 py-2 max-w-[80%] text-sm shadow-sm whitespace-pre-line ${
-                      message.role === "user"
-                        ? "bg-blue-600 text-white"
-                        : "bg-white border text-slate-800"
-                    }`}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex gap-3">
-                  <Avatar className="h-8 w-8 mt-1">
-                    <AvatarFallback className="bg-blue-600 text-white">
-                      <Bot size={16} />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="bg-slate-100 rounded-2xl px-4 py-3 flex gap-1 items-center">
-                    <div
-                      className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0ms" }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "150ms" }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "300ms" }}
-                    />
-                  </div>
-                </div>
-              )}
-              <div ref={scrollRef} />
+              <div
+                className={`group relative px-5 py-3.5 rounded-2xl max-w-[85%] md:max-w-[75%] shadow-sm text-sm leading-relaxed whitespace-pre-wrap border ${
+                  m.role === "user"
+                    ? "bg-universe-purple text-white border-universe-purple rounded-tr-none"
+                    : "bg-card text-card-foreground border-border/50 rounded-tl-none"
+                }`}
+              >
+                {m.content}
+              </div>
             </div>
-          </ScrollArea>
-        </CardContent>
+          ))}
 
-        <div className="p-4 border-t bg-white">
+          {isLoading && (
+            <div className="flex gap-4 animate-in fade-in duration-300">
+              <Avatar className="h-10 w-10 border border-border">
+                <AvatarFallback className="bg-universe-cyan text-universe-dark">
+                  <Bot size={18} />
+                </AvatarFallback>
+              </Avatar>
+              <div className="bg-card px-5 py-4 rounded-2xl rounded-tl-none border border-border/50 shadow-sm flex gap-1.5 items-center w-fit">
+                <span className="w-2 h-2 bg-universe-cyan rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="w-2 h-2 bg-universe-purple rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="w-2 h-2 bg-universe-pink rounded-full animate-bounce"></span>
+              </div>
+            </div>
+          )}
+          <div ref={scrollRef} />
+        </div>
+      </ScrollArea>
+
+      <div className="p-4 bg-background/80 backdrop-blur-md border-t border-border/40">
+        <div className="max-w-3xl mx-auto relative">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -169,21 +155,20 @@ export default function AIPage() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Спросите про университеты, цены или гранты..."
-              className="flex-1"
-              disabled={isLoading}
+              placeholder="Спросите про гранты или вузы..."
+              className="pl-5 pr-14 py-6 rounded-full border-border bg-secondary/30 focus:bg-background focus:border-universe-purple transition-all shadow-inner text-base"
             />
             <Button
               type="submit"
-              disabled={isLoading || !input.trim()}
               size="icon"
-              className="bg-blue-600"
+              disabled={!input.trim() || isLoading}
+              className="absolute right-2 top-1.5 h-9 w-9 rounded-full bg-universe-purple hover:bg-universe-purple/90 text-white transition-transform hover:scale-105 shadow-md shadow-universe-purple/20"
             >
               <Send className="h-4 w-4" />
             </Button>
           </form>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

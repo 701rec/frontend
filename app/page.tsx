@@ -64,26 +64,24 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* HERO SECTION - Современное приветствие */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-universe-indigo">
-        {/* Фоновые градиенты */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-universe-purple rounded-full blur-[120px] opacity-40 translate-x-1/3 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-universe-cyan rounded-full blur-[100px] opacity-30 -translate-x-1/4 translate-y-1/4"></div>
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-universe-purple/30 rounded-full blur-[120px] opacity-50 translate-x-1/3 -translate-y-1/4 animate-in fade-in duration-1000"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-universe-cyan/30 rounded-full blur-[100px] opacity-40 -translate-x-1/4 translate-y-1/4 animate-in fade-in duration-1000 delay-300"></div>
 
         <div className="container relative z-10 px-4 mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-universe-cyan text-sm font-medium mb-8 backdrop-blur-sm border border-white/10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-universe-purple/10 text-universe-purple border border-universe-purple/20 text-sm font-medium mb-8 backdrop-blur-sm">
             <Sparkles className="h-4 w-4" /> AI Hackathon 2025 Project
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-7xl font-bold mb-6 tracking-tight text-foreground">
             Твой путь к знаниям начинается в{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-universe-cyan to-universe-purple">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-universe-cyan via-universe-purple to-universe-pink">
               UniVerse
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Единый DataHub университетов РК. Сравнивай вузы, изучай программы и
             поступай на грант с помощью Искусственного Интеллекта.
           </p>
@@ -92,7 +90,7 @@ export default function Home() {
             <Link href="/ai">
               <Button
                 size="lg"
-                className="bg-universe-cyan hover:bg-cyan-400 text-universe-indigo font-bold text-lg px-8 h-14 rounded-full shadow-[0_0_20px_rgba(63,172,247,0.5)] transition-all hover:scale-105"
+                className="bg-universe-cyan hover:bg-universe-cyan/80 text-universe-dark font-bold text-lg px-8 h-14 rounded-full shadow-[0_0_20px_rgba(63,172,247,0.4)] transition-all hover:scale-105"
               >
                 Запустить AI-Помощника ✨
               </Button>
@@ -101,7 +99,7 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-slate-500 text-white hover:bg-white/10 hover:text-white h-14 px-8 rounded-full text-lg"
+                className="bg-background/50 border-input text-foreground hover:bg-accent hover:text-accent-foreground h-14 px-8 rounded-full text-lg backdrop-blur-sm"
               >
                 Открыть каталог
               </Button>
@@ -110,14 +108,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES GRID - Твои 6 кнопок, но компактнее */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-universe-indigo mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Все инструменты в одном месте
             </h2>
-            <p className="text-slate-600">
+            <p className="text-muted-foreground">
               Шесть мощных модулей для абитуриента
             </p>
           </div>
@@ -127,23 +124,23 @@ export default function Home() {
               <Link
                 href={item.link}
                 key={item.id}
-                className="group relative bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden"
+                className="group relative bg-card rounded-2xl p-6 border border-border/50 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden hover:border-universe-purple/50"
               >
                 <div
-                  className={`absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-10 transition-transform group-hover:scale-150 ${item.color}`}
+                  className={`absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-10 transition-transform group-hover:scale-150 ${item.color}`}
                 />
 
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm ${item.color}`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-md ${item.color}`}
                 >
                   {item.icon}
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-universe-purple transition-colors">
+                <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-universe-purple transition-colors">
                   {item.title}
                 </h3>
 
-                <p className="text-slate-500 text-sm mb-4 leading-relaxed">
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                   {item.desc}
                 </p>
 

@@ -1,48 +1,64 @@
 "use client";
 
 import Link from "next/link";
-import { GraduationCap, User } from "lucide-react";
-import { Button } from "./ui/button";
+import { GraduationCap, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "./theme-toggle";
+
+const navLinks = [
+  { name: "Каталог", path: "/universities" },
+  { name: "Сравнение", path: "/compare" },
+  { name: "Гранты", path: "/admission" },
+  { name: "Помощь", path: "/help" },
+];
 
 export default function Navbar() {
   return (
-    <nav className="border-b bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <div className="bg-universe-purple p-1.5 rounded-lg text-white">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+        <Link
+          href="/"
+          className="flex items-center gap-3 group transition-opacity hover:opacity-90"
+        >
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-universe-purple/10 text-universe-purple group-hover:bg-universe-purple group-hover:text-white transition-colors duration-300">
             <GraduationCap className="h-6 w-6" />
           </div>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-universe-indigo via-universe-purple to-universe-cyan text-2xl">
-            UniVerse
+          <span className="text-2xl font-bold tracking-tight text-foreground">
+            Uni<span className="text-universe-purple">Verse</span>
           </span>
         </Link>
 
-        <Link href="/login">
-          <Button className="flex items-center gap-2 bg-universe-purple text-white px-4 py-2 rounded-lg hover:bg-universe-indigo transition shadow-md">
-            <User className="h-4 w-4" />
-            <span>Войти</span>
-          </Button>
-        </Link>
-
-        <div className="hidden md:flex gap-6 text-gray-600 font-medium">
-          <Link href="/universities" className="hover:text-blue-600 transition">
-            Вузы
-          </Link>
-          <Link href="/compare" className="hover:text-blue-600 transition">
-            Сравнение
-          </Link>
-          <Link
-            href="/ai"
-            className="hover:text-blue-600 transition text-purple-600 flex gap-1"
-          >
-            AI-Помощник ✨
-          </Link>
+        <div className="hidden md:flex items-center gap-1 rounded-full border border-border/40 bg-secondary/50 p-1 backdrop-blur-md">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              className="rounded-full px-5 py-2 text-base font-medium text-muted-foreground transition-all hover:bg-background hover:text-foreground hover:shadow-sm"
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
 
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
-          <User className="h-4 w-4" />
-          <span>Войти как гость</span>
-        </button>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+
+          <Link href="/ai">
+            <Button
+              variant="ghost"
+              className="hidden sm:flex gap-2 text-universe-cyan hover:bg-universe-cyan/10 hover:text-universe-cyan font-semibold text-base"
+            >
+              <Sparkles className="h-5 w-5" />
+              AI Chat
+            </Button>
+          </Link>
+
+          <Link href="/login">
+            <Button className="rounded-full bg-universe-purple hover:bg-universe-purple/90 text-white shadow-lg shadow-universe-purple/20 transition-all hover:shadow-universe-purple/40 px-6 font-semibold text-base">
+              Войти
+            </Button>
+          </Link>
+        </div>
       </div>
     </nav>
   );

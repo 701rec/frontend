@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, MapPin, Phone, Globe, Award, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,44 +11,73 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
 
 const universitiesDB: Record<string, any> = {
   iitu: {
-    name: "International IT University",
+    name: "International Information Technology University",
     short: "IITU (МУИТ)",
-    desc: "Ведущий IT-университет Центральной Азии, лидер по подготовке квалифицированных кадров в сфере ИКТ.",
+    desc: "МУИТ — ведущий специализированный IT-университет Центральной Азии. Вуз формирует цифровую элиту страны, сотрудничает с Apple, Microsoft, Huawei.",
     image:
-      "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000&auto=format&fit=crop", // Заглушка
-    location: "г. Алматы, ул. Манаса, 34/1",
-    rating: 4.8,
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
+    location: "Алматы, ул. Манаса 34/1",
+    rating: 4.9,
     price: "1 200 000 ₸",
     contacts: "+7 (727) 320 00 00",
     programs: [
-      "Computer Science (ВТиПО)",
-      "Software Engineering (ИС)",
-      "Cybersecurity (ИБ)",
-      "Data Science",
-      "Journalism & Digital Media",
+      "Computer Science",
+      "Cybersecurity",
+      "Software Engineering",
+      "Big Data Analysis",
+      "IT Management",
     ],
   },
   kbtu: {
     name: "Kazakh-British Technical University",
     short: "KBTU (КБТУ)",
-    desc: "Научно-образовательный кластер, объединяющий университет, индустрию и науку.",
+    desc: "КБТУ — лидер технического образования. Программы двойного диплома с Лондонской школой экономики. Сильнейшие связи с нефтегазовым сектором.",
     image:
-      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1000&auto=format&fit=crop",
-    location: "г. Алматы, ул. Толе би, 59",
-    rating: 4.9,
+      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80",
+    location: "Алматы, ул. Толе би 59",
+    rating: 4.8,
     price: "1 800 000 ₸",
     contacts: "+7 (727) 357 42 42",
     programs: [
-      "Information Systems",
       "Petroleum Engineering",
-      "Chemical Engineering",
       "Maritime Academy",
+      "Information Systems",
+      "Finance & Audit",
       "Business School",
     ],
+  },
+  sdu: {
+    name: "Suleyman Demirel University",
+    short: "SDU (СДУ)",
+    desc: "СДУ — современный кампус, англоязычное обучение и сильная корпоративная культура. Один из самых быстрорастущих университетов.",
+    image:
+      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80",
+    location: "Каскелен, Алматинская обл.",
+    rating: 4.7,
+    price: "1 400 000 ₸",
+    contacts: "+7 (727) 307 95 65",
+    programs: [
+      "Computer Engineering",
+      "Law",
+      "International Relations",
+      "Mathematics",
+      "Journalism",
+    ],
+  },
+  kaznu: {
+    name: "Al-Farabi Kazakh National University",
+    short: "KazNU (КазНУ)",
+    desc: "Главный национальный вуз страны. Огромный кампус (Казгуград), фундаментальная наука и более 100 специальностей.",
+    image:
+      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+    location: "Алматы, пр. Аль-Фараби 71",
+    rating: 4.6,
+    price: "1 000 000 ₸",
+    contacts: "+7 (727) 377 33 33",
+    programs: ["Physics", "Chemistry", "Biology", "History", "Philology"],
   },
 };
 
@@ -60,8 +90,8 @@ export default async function UniversityPage({
   const uni = universitiesDB[id] || universitiesDB["iitu"];
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-10">
-      <div className="relative h-64 md:h-80 bg-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-background pb-10 transition-colors duration-300">
+      <div className="relative h-64 md:h-96 bg-universe-indigo overflow-hidden">
         <Image
           src={uni.image}
           alt={uni.name}
@@ -69,37 +99,47 @@ export default async function UniversityPage({
           className="object-cover opacity-40"
           priority
         />
-        <div className="absolute inset-0 flex flex-col justify-end container mx-auto px-4 pb-8">
+        <div className="absolute inset-0 flex flex-col justify-end container mx-auto px-4 pb-10">
           <Link
             href="/universities"
-            className="text-white/80 hover:text-white flex items-center gap-2 mb-4 transition-colors w-fit"
+            className="text-white/80 hover:text-white flex items-center gap-2 mb-6 transition-colors w-fit"
           >
             <ArrowLeft className="h-4 w-4" /> Назад к списку
           </Link>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <Badge className="mb-2 bg-blue-500 hover:bg-blue-600">
-                Top University
-              </Badge>
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">
+              <div className="flex gap-2 mb-3">
+                <Badge className="bg-universe-cyan text-universe-dark hover:bg-universe-cyan/80 font-bold border-none">
+                  Top University
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="text-white border-white/50 backdrop-blur-sm"
+                >
+                  Аккредитован
+                </Badge>
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-md">
                 {uni.short}
               </h1>
-              <div className="flex items-center gap-4 text-slate-300 text-sm md:text-base">
+              <div className="flex flex-wrap items-center gap-4 text-slate-200 text-sm md:text-base font-medium">
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" /> {uni.location}
+                  <MapPin className="h-4 w-4 text-universe-cyan" />{" "}
+                  {uni.location}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Award className="h-4 w-4" /> Рейтинг: {uni.rating}/5
+                  <Award className="h-4 w-4 text-yellow-400" /> Рейтинг:{" "}
+                  {uni.rating}/5
                 </span>
               </div>
             </div>
             <div className="flex gap-3">
-              <Button className="bg-white text-blue-900 hover:bg-slate-100 font-bold">
+              <Button className="bg-universe-purple hover:bg-universe-purple/90 text-white font-bold px-6 shadow-lg shadow-universe-purple/20">
                 Подать документы
               </Button>
               <Button
                 variant="outline"
-                className="text-white border-white hover:bg-white/20"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
               >
                 3D Тур
               </Button>
@@ -108,87 +148,106 @@ export default async function UniversityPage({
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 -mt-6">
+      <div className="container mx-auto px-4 py-8 -mt-6 relative z-10">
         <Tabs defaultValue="about" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-white shadow-md p-1 h-auto rounded-xl">
-            <TabsTrigger value="about" className="py-3">
+          <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
+            <TabsTrigger
+              value="about"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+            >
               Об университете
             </TabsTrigger>
-            <TabsTrigger value="programs" className="py-3">
+            <TabsTrigger
+              value="programs"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+            >
               Программы
             </TabsTrigger>
-            <TabsTrigger value="admission" className="py-3">
+            <TabsTrigger
+              value="admission"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+            >
               Поступление
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="about" className="mt-6">
+          <TabsContent value="about" className="mt-8">
             <div className="grid md:grid-cols-3 gap-6">
-              <Card className="md:col-span-2">
+              <Card className="md:col-span-2 border-border/50 bg-card shadow-sm">
                 <CardHeader>
-                  <CardTitle>Описание</CardTitle>
+                  <CardTitle className="text-foreground">Описание</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-600 leading-relaxed text-lg">
+                  <p className="text-muted-foreground leading-relaxed text-lg">
                     {uni.desc}
                   </p>
-                  <div className="mt-6 grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h3 className="font-bold text-blue-900 text-2xl">98%</h3>
-                      <p className="text-sm text-blue-700">Трудоустройство</p>
+                  <div className="mt-8 grid grid-cols-2 gap-4">
+                    <div className="p-6 bg-universe-cyan/10 rounded-2xl border border-universe-cyan/20">
+                      <h3 className="font-bold text-universe-cyan text-3xl mb-1">
+                        98%
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Трудоустройство выпускников
+                      </p>
                     </div>
-                    <div className="p-4 bg-indigo-50 rounded-lg">
-                      <h3 className="font-bold text-indigo-900 text-2xl">
+                    <div className="p-6 bg-universe-purple/10 rounded-2xl border border-universe-purple/20">
+                      <h3 className="font-bold text-universe-purple text-3xl mb-1">
                         40+
                       </h3>
-                      <p className="text-sm text-indigo-700">Вузов-партнеров</p>
+                      <p className="text-sm text-muted-foreground">
+                        Вузов-партнеров по миру
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-border/50 bg-card shadow-sm h-fit">
                 <CardHeader>
-                  <CardTitle>Контакты</CardTitle>
+                  <CardTitle className="text-foreground">Контакты</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-5 w-5 text-slate-400" />
-                    <span>{uni.contacts}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Globe className="h-5 w-5 text-slate-400" />
-                    <span className="text-blue-600 cursor-pointer">
-                      www.example.kz
+                <CardContent className="space-y-5">
+                  <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
+                    <Phone className="h-5 w-5 text-universe-cyan" />
+                    <span className="font-medium text-foreground">
+                      {uni.contacts}
                     </span>
                   </div>
-                  <div className="h-40 bg-slate-200 rounded-md flex items-center justify-center text-slate-400 text-sm">
-                    Карта (Google Maps)
+                  <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
+                    <Globe className="h-5 w-5 text-universe-cyan" />
+                    <span className="text-universe-purple cursor-pointer hover:underline font-medium">
+                      www.website.kz
+                    </span>
+                  </div>
+                  <div className="aspect-video bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground text-sm border border-border/50">
+                    <MapPin className="h-4 w-4 mr-2" /> Карта (Google Maps)
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="programs" className="mt-6">
-            <Card>
+          <TabsContent value="programs" className="mt-8">
+            <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
-                <CardTitle>Бакалавриат и Магистратура</CardTitle>
-                <CardDescription>
-                  Доступные образовательные программы на 2025 год
-                </CardDescription>
+                <CardTitle className="text-foreground">
+                  Образовательные программы 2025
+                </CardTitle>
+                <CardDescription>Бакалавриат</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
                   {uni.programs.map((prog: string, i: number) => (
                     <div
                       key={i}
-                      className="flex items-center gap-4 p-4 border rounded-lg hover:border-blue-500 hover:shadow-sm transition cursor-pointer group"
+                      className="flex items-center gap-4 p-5 border border-border/50 rounded-2xl hover:border-universe-cyan hover:shadow-md transition cursor-pointer group bg-card"
                     >
-                      <div className="h-10 w-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition">
-                        <BookOpen className="h-5 w-5" />
+                      <div className="h-12 w-12 bg-universe-cyan/10 text-universe-cyan rounded-full flex items-center justify-center group-hover:bg-universe-cyan group-hover:text-universe-dark transition">
+                        <BookOpen className="h-6 w-6" />
                       </div>
-                      <span className="font-medium text-slate-700">{prog}</span>
+                      <span className="font-bold text-foreground group-hover:text-universe-purple transition-colors">
+                        {prog}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -196,37 +255,56 @@ export default async function UniversityPage({
             </Card>
           </TabsContent>
 
-          <TabsContent value="admission" className="mt-6">
-            <Card>
+          <TabsContent value="admission" className="mt-8">
+            <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
-                <CardTitle>Приемная комиссия 2025</CardTitle>
+                <CardTitle className="text-foreground">
+                  Информация для поступающих
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center border-b pb-4">
+                <div className="space-y-8">
+                  <div className="flex justify-between items-center border-b border-border/50 pb-6">
                     <div>
-                      <p className="font-medium">Стоимость обучения (год)</p>
-                      <p className="text-sm text-slate-500">
-                        Может меняться в зависимости от программы
+                      <p className="font-bold text-lg text-foreground">
+                        Стоимость обучения
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        За один академический год
                       </p>
                     </div>
-                    <span className="text-xl font-bold text-green-600">
+                    <span className="text-2xl font-bold text-universe-purple">
                       {uni.price}
                     </span>
                   </div>
 
-                  <div className="space-y-2">
-                    <p className="font-medium">Необходимые документы:</p>
-                    <ul className="list-disc list-inside text-slate-600 space-y-1">
-                      <li>Аттестат о среднем образовании</li>
-                      <li>Сертификат ЕНТ (мин. 50 баллов)</li>
-                      <li>Удостоверение личности (копия)</li>
-                      <li>Медицинская справка 075-У</li>
-                      <li>6 фотографий 3x4</li>
+                  <div className="space-y-4">
+                    <p className="font-bold text-foreground">
+                      Необходимые документы:
+                    </p>
+                    <ul className="grid md:grid-cols-2 gap-3">
+                      {[
+                        "Аттестат",
+                        "Сертификат ЕНТ",
+                        "Удостоверение (копия)",
+                        "Справка 075-У",
+                        "Фото 3x4 (6 шт)",
+                        "Заявление",
+                      ].map((doc, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-muted-foreground bg-secondary/30 p-3 rounded-lg border border-border/30"
+                        >
+                          <div className="h-2 w-2 rounded-full bg-universe-cyan" />
+                          {doc}
+                        </li>
+                      ))}
                     </ul>
                   </div>
 
-                  <Button className="w-full">Подать онлайн-заявку</Button>
+                  <Button className="w-full h-12 text-lg bg-universe-indigo hover:bg-universe-indigo/90 shadow-lg shadow-universe-indigo/20">
+                    Подать онлайн-заявку
+                  </Button>
                 </div>
               </CardContent>
             </Card>
