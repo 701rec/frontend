@@ -12,8 +12,8 @@ import {
   RotateCw,
   Share2,
   MousePointer2,
-  Video, // Иконка для видео
-  Radio, // Иконка для эфира
+  Video,
+  Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,31 +31,7 @@ const TOURS_DB: any = {
     address: "ул. Манаса, 34/1, Алматы",
     description:
       "Виртуальный тур по главному IT-университету. Посетите современные лаборатории, лекционные залы и зоны отдыха.",
-    // Ссылка на видео (студенты в холле / библиотека)
     live_video: "/iitu.mp4",
-    scenes: [
-      {
-        id: "lobby",
-        name: "Главный Холл",
-        image:
-          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/2294472375_24a3b8ef46_o.jpg",
-      },
-      {
-        id: "audi",
-        name: "Лекционный зал",
-        image:
-          "https://raw.githubusercontent.com/aframevr/aframe/master/examples/boilerplate/panorama/puydesancy.jpg",
-      },
-    ],
-  },
-  kbtu: {
-    id: "7",
-    title: "Кампус КБТУ",
-    address: "ул. Толе би, 59, Алматы",
-    description:
-      "Здание КБТУ является памятником истории. Уникальная атмосфера, сочетающая классический стиль и технологии.",
-    // Ссылка на видео (архитектура / люди)
-    live_video: "/error.mp4",
     scenes: [
       {
         id: "round_hall",
@@ -68,6 +44,28 @@ const TOURS_DB: any = {
         name: "Библиотека",
         image:
           "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/2294472375_24a3b8ef46_o.jpg",
+      },
+    ],
+  },
+  kbtu: {
+    id: "3",
+    title: "Кампус КБТУ",
+    address: "ул. Толе би, 59, Алматы",
+    description:
+      "Здание КБТУ является памятником истории. Уникальная атмосфера, сочетающая классический стиль и технологии.",
+    live_video: "/error.mp4",
+    scenes: [
+      {
+        id: "round_hall",
+        name: "Круглый Зал",
+        image:
+          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/2294472375_24a3b8ef46_o.jpg",
+      },
+      {
+        id: "library",
+        name: "Библиотека",
+        image:
+          "https://raw.githubusercontent.com/aframevr/aframe/master/examples/boilerplate/panorama/puydesancy.jpg",
       },
     ],
   },
@@ -89,8 +87,11 @@ export default function TourDetailPage() {
     const tourId = params.id as string;
 
     setTimeout(() => {
-      const foundTour = TOURS_DB[tourId];
-      if (foundTour) setTour(foundTour);
+      // ИЗМЕНЕНИЕ ЗДЕСЬ:
+      // Пытаемся найти тур по ID, если не находим — берем IITU
+      const foundTour = TOURS_DB[tourId] || TOURS_DB["iitu"];
+
+      setTour(foundTour);
       setIsLoading(false);
     }, 800);
 
@@ -110,6 +111,7 @@ export default function TourDetailPage() {
   }, [params.id]);
 
   if (isLoading) return <Loading />;
+  // Эта проверка теперь сработает только если даже 'iitu' нет в базе, но мы это предусмотрели
   if (!tour) return <div className="p-10 text-center">Тур не найден</div>;
 
   const activeScene = tour.scenes[activeSceneIndex];
