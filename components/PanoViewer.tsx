@@ -1,23 +1,25 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
-import { Canvas, useThree, useLoader } from "@react-three/fiber";
+import { Suspense, FC } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Preload, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { Loader2 } from "lucide-react";
+
+// --- КОМПОНЕНТЫ THREE.JS ---
 
 // Компонент самой сферы с текстурой
 function PanoSphere({ image }: { image: string }) {
   // Загружаем текстуру. Suspense будет ждать, пока она загрузится
   const texture = useTexture(image);
 
-  // Переворачиваем текстуру по оси X, чтобы она смотрелась правильно изнутри
+  // Настройка текстуры для правильной проекции и цвета
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <mesh>
-      {/* Сфера радиусом 500, чтобы казалась бесконечным горизонтом */}
+      {/* Сфера радиусом 500 для создания бесконечного горизонта */}
       <sphereGeometry args={[500, 60, 40]} />
       {/* Рисуем текстуру на ВНУТРЕННЕЙ стороне сферы */}
       <meshBasicMaterial
@@ -29,58 +31,50 @@ function PanoSphere({ image }: { image: string }) {
   );
 }
 
-// Контроллер камеры, чтобы она вращалась "наоборот" (как в панорамах)
+// Контроллер камеры, который обеспечивает вращение как в панорамах
 function CameraController({ autoRotate }: { autoRotate: boolean }) {
-  const { camera } = useThree();
-
-  useEffect(() => {
-    // Начальная позиция камеры
-    camera.position.set(0, 0, 0.1);
-  }, [camera]);
-
   return (
     <OrbitControls
-      enableZoom={true} // Разрешить зум (изменение FOV)
-      enablePan={false} // Запретить сдвигать камеру (только вращение)
-      enableDamping={true} // Плавная инерция
+      enableZoom={true}
+      enablePan={false}
+      enableDamping={true}
       dampingFactor={0.05}
-      autoRotate={autoRotate} // Автовращение
-      autoRotateSpeed={0.5} // Скорость автовращения
-      rotateSpeed={-0.5} // Инвертируем управление, чтобы тянуть картинку, а не камеру
-      maxDistance={100} // Ограничения зума
+      autoRotate={autoRotate} // Включаем/отключаем автовращение
+      autoRotateSpeed={0.5}
+      rotateSpeed={-0.5} // Инвертируем управление для эффекта "перетаскивания картинки"
+      maxDistance={100}
       minDistance={0}
     />
   );
 }
 
-interface PanoViewerProps {
+// --- ИНТЕРФЕЙС И ОСНОВНОЙ КОМПОНЕНТ ---
+
+// 2. Экспортируем пропсы, чтобы их мог импортировать DynamicPanoViewer.tsx
+export interface PanoViewerProps {
   image: string;
   isAutoRotate: boolean;
 }
 
-export default function PanoViewer({ image, isAutoRotate }: PanoViewerProps) {
+const PanoViewer: FC<PanoViewerProps> = ({ image, isAutoRotate }) => {
   return (
     <div className="w-full h-full bg-black relative">
       <Canvas
+        // Устанавливаем начальную позицию и FOV камеры
         camera={{ fov: 75, position: [0, 0, 0.1] }}
         gl={{ antialias: true }}
+        // Спиннер загрузки, пока Three.js инициализируется и ждет Suspense
+        fallback={<Loader2 className="h-10 w-10 text-white animate-spin" />}
       >
+        {/* Suspense для ожидания загрузки текстуры */}
         <Suspense fallback={null}>
           <PanoSphere image={image} />
           <Preload all />
         </Suspense>
         <CameraController autoRotate={isAutoRotate} />
       </Canvas>
-
-      {/* Спиннер загрузки поверх Canvas, пока useTexture грузит картинку */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <Suspense
-          fallback={<Loader2 className="h-10 w-10 text-white animate-spin" />}
-        >
-          {/* Пустой компонент, нужен только чтобы Suspense работал внутри Canvas */}
-          <span className="hidden">Loaded</span>
-        </Suspense>
-      </div>
     </div>
   );
-}
+};
+
+export default PanoViewer;

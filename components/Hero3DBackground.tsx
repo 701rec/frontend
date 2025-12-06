@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, FC } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Float,
@@ -8,7 +8,7 @@ import {
   MeshDistortMaterial,
   Icosahedron,
   Sphere,
-  Torus, // Импортируем Торус для создания "тарелки"
+  Torus,
 } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -18,15 +18,34 @@ const colors = {
   cyan: "#06b6d4",
 };
 
-// --- НОВЫЙ КОМПОНЕНТ "ТАРЕЛКА СО СФЕРОЙ" ---
-function SciFiPlate({
+// --- ИНТЕРФЕЙСЫ ДЛЯ ТИПИЗАЦИИ ---
+
+// Интерфейс для компонента SciFiPlate
+interface SciFiPlateProps {
+  initialPosition: [number, number, number]; // Кортеж [x, y, z]
+  primaryColor: string;
+  secondaryColor: string;
+  // Остальные пропсы (например, scale, position, rotation) наследуются от Three.js Group
+  [key: string]: any;
+}
+
+// Интерфейс для компонента FloatingGem
+interface FloatingGemProps {
+  initialPosition: [number, number, number];
+  color: string;
+  [key: string]: any;
+}
+
+// --- КОМПОНЕНТ "ТАРЕЛКА СО СФЕРОЙ" ---
+// ⚠️ ИСПРАВЛЕНИЕ: Добавлен FC<SciFiPlateProps> для явной типизации
+const SciFiPlate: FC<SciFiPlateProps> = ({
   initialPosition,
   primaryColor,
   secondaryColor,
   ...props
-}) {
+}) => {
   // Используем ref для всей группы объектов
-  const groupRef = useRef();
+  const groupRef = useRef<THREE.Group>(null!);
 
   const startPos = useMemo(
     () => new THREE.Vector3(...initialPosition),
@@ -85,8 +104,6 @@ function SciFiPlate({
       </Sphere>
 
       {/* --- ДИСК (ТАРЕЛКА) ВОКРУГ СФЕРЫ --- */}
-      {/* Torus args: [радиус кольца, толщина трубки, сегменты, сегменты] */}
-      {/* rotation поворорачивает его плашмя, scale сплющивает по Z */}
       <Torus
         args={[1.4, 0.25, 64, 64]}
         rotation={[Math.PI / 2, 0, 0]}
@@ -104,11 +121,16 @@ function SciFiPlate({
       </Torus>
     </group>
   );
-}
+};
 
-// Камни/спутники (без изменений)
-function FloatingGem({ initialPosition, color, ...props }) {
-  const ref = useRef();
+// Камни/спутники
+// ⚠️ ИСПРАВЛЕНИЕ: Добавлен FC<FloatingGemProps> для явной типизации
+const FloatingGem: FC<FloatingGemProps> = ({
+  initialPosition,
+  color,
+  ...props
+}) => {
+  const ref = useRef<THREE.Mesh>(null!);
   const startPos = useMemo(
     () => new THREE.Vector3(...initialPosition),
     [initialPosition]
@@ -149,7 +171,7 @@ function FloatingGem({ initialPosition, color, ...props }) {
       />
     </Icosahedron>
   );
-}
+};
 
 export default function Hero3DBackground() {
   return (
