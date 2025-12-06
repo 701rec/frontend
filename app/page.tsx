@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Building2,
@@ -10,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Hero3DBackground from "@/components/Hero3DBackground"; // Убедитесь, что этот файл создан
 
 export default function Home() {
   const features = [
@@ -66,6 +69,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       <section className="relative py-20 lg:py-32 overflow-hidden">
+        {/* --- 1. Фоновые эффекты (Blob Gradients) --- */}
         <div
           className={`absolute top-0 right-0 w-[600px] h-[600px] bg-universe-purple/30 rounded-full blur-[120px] opacity-50 translate-x-1/3 -translate-y-1/4 animate-float-1`}
         ></div>
@@ -78,6 +82,12 @@ export default function Home() {
           className={`absolute top-1/2 left-1/2 w-64 h-64 bg-universe-indigo/20 rounded-full blur-[80px] opacity-30 transform -translate-x-1/2 -translate-y-1/2 animate-float-3 hidden lg:block`}
         ></div>
 
+        {/* --- 2. 3D ОБЪЕКТ --- */}
+        {/* Располагается поверх градиентов, но под текстом */}
+        <Hero3DBackground />
+
+        {/* --- 3. Основной контент --- */}
+        {/* Z-10 нужен, чтобы кнопки нажимались поверх 3D Canvas */}
         <div className="container relative z-10 px-4 mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-universe-purple/10 text-universe-purple border border-universe-purple/20 text-sm font-medium mb-8 backdrop-blur-sm">
             <Sparkles className="h-4 w-4" /> AI Hackathon 2025 Project
@@ -117,6 +127,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* --- Секция фич --- */}
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">

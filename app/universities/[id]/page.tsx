@@ -16,13 +16,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import { getUniversityById } from "@/services/university.service";
 import { notFound } from "next/navigation";
 import { University } from "@/types/university";
+import MapWrapper from "@/components/MapWrapper";
+
+// Координаты IITU (Алматы) как запасной вариант для всех
+const DEFAULT_COORDS: [number, number] = [43.2351, 76.9097];
 
 export default async function UniversityPage({
   params,
@@ -30,7 +34,6 @@ export default async function UniversityPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
   const uni: University | null = await getUniversityById(id);
 
   if (!uni) {
@@ -56,6 +59,7 @@ export default async function UniversityPage({
 
   return (
     <div className="min-h-screen bg-background pb-10 transition-colors duration-300">
+      {/* --- HERO SECTION --- */}
       <div className="relative h-64 md:h-96 bg-universe-indigo overflow-hidden">
         <Image
           src={uni.imageUrl || "/placeholder.jpg"}
@@ -102,17 +106,20 @@ export default async function UniversityPage({
               <Button className="bg-universe-purple hover:bg-universe-purple/90 text-white font-bold px-6 shadow-lg shadow-universe-purple/20">
                 Подать документы
               </Button>
-              <Button
-                variant="outline"
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
-              >
-                3D Тур
-              </Button>
+              <Link href={`/tours/${uni.id}`}>
+                <Button
+                  variant="outline"
+                  className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
+                >
+                  3D Тур
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
+      {/* --- MAIN CONTENT --- */}
       <div className="container mx-auto px-4 py-8 -mt-6 relative z-10">
         <Tabs defaultValue="about" className="w-full">
           <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
@@ -136,8 +143,10 @@ export default async function UniversityPage({
             </TabsTrigger>
           </TabsList>
 
+          {/* TAB: ABOUT */}
           <TabsContent value="about" className="mt-8">
             <div className="grid md:grid-cols-3 gap-6">
+              {/* Левая колонка: Описание */}
               <Card className="md:col-span-2 border-border/50 bg-card shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-foreground">Описание</CardTitle>
@@ -182,6 +191,7 @@ export default async function UniversityPage({
                 </CardContent>
               </Card>
 
+              {/* Правая колонка: Контакты и Карта */}
               <Card className="border-border/50 bg-card shadow-sm h-fit">
                 <CardHeader>
                   <CardTitle className="text-foreground">Контакты</CardTitle>
@@ -203,20 +213,26 @@ export default async function UniversityPage({
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-universe-purple cursor-pointer hover:underline font-medium"
+                      className="text-universe-purple cursor-pointer hover:underline font-medium truncate"
                     >
                       {uni.website}
                     </a>
                   </div>
-                  <div className="aspect-video bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground text-sm border border-border/50">
-                    <MapPin className="h-4 w-4 mr-2" /> Карта (
-                    {uni.location.split(",")[0].trim()})
+
+                  {/* КАРТА ВСЕГДА ПОКАЗЫВАЕТСЯ */}
+                  <div className="aspect-video bg-secondary/50 rounded-lg overflow-hidden border border-border/50 relative z-0">
+                    <MapWrapper
+                      name={uni.shortName}
+                      // Если есть координаты в базе - берем их, если нет - берем DEFAULT_COORDS
+                      coords={uni.coordinates || DEFAULT_COORDS}
+                    />
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
+          {/* TAB: PROGRAMS */}
           <TabsContent value="programs" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
@@ -251,6 +267,7 @@ export default async function UniversityPage({
             </Card>
           </TabsContent>
 
+          {/* TAB: ADMISSION */}
           <TabsContent value="admission" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>

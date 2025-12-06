@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://192.168.8.31:8080";
+export const API_BASE_URL = "https://backend-1ane.onrender.com";
 
 export const API_PREFIX = "/api";
 

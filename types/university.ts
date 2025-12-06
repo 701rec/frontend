@@ -14,4 +14,5 @@ export interface University {
   dorm: boolean;
   focus: string;
   programs: string[];
+  coordinates?: [number, number];
 }

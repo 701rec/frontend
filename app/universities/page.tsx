@@ -77,7 +77,7 @@ export default function UniversitiesList() {
       <div className="container mx-auto px-4 -mt-12 relative z-20 pb-20">
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 11 }).map((_, index) => (
+            {Array.from({ length: 8 }).map((_, index) => (
               <UniCardSkeleton key={index} />
             ))}
           </div>

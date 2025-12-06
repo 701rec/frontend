@@ -26,14 +26,15 @@ import {
   LogOut,
   User,
   MapPin,
-  Loader2,
   Bell,
   Shield,
   Save,
+  Loader2,
 } from "lucide-react";
 
 import { getUserProfile } from "@/services/user.service";
 import { UserProfile } from "@/types/user";
+import Loading from "./loading";
 
 export default function ProfilePage() {
   const { logout } = useAuth();
@@ -41,9 +42,8 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false); // Состояние сохранения настроек
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Локальные состояния для полей настроек
   const [location, setLocation] = useState("");
   const [targetScore, setTargetScore] = useState("");
 
@@ -53,9 +53,12 @@ export default function ProfilePage() {
         setIsLoading(true);
         const data = await getUserProfile(1);
         setProfile(data);
-        // Заполняем форму текущими данными
-        setLocation(data.location);
-        setTargetScore(data.entScore.toString());
+
+        // Используем опциональную цепочку при установке стейта, чтобы не упало при ошибке
+        if (data) {
+          setLocation(data.location);
+          setTargetScore(data.entScore.toString());
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -70,31 +73,23 @@ export default function ProfilePage() {
     router.push("/login");
   };
 
-  // Функция сохранения (без уведомлений)
   const handleSaveSettings = () => {
     setIsSaving(true);
-    // Имитируем задержку API (1 секунда)
     setTimeout(() => {
       setIsSaving(false);
-      // Здесь можно добавить реальную логику отправки на API
       console.log("Данные сохранены:", { location, targetScore });
     }, 1000);
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
+  const getInitials = (firstName?: string, lastName?: string) => {
     return `${firstName?.[0] || ""}${lastName?.[0] || ""}`;
   };
 
+  // ✅ Оставляем только Loading.
+  // Если загрузка прошла, но профиля нет (ошибка),
+  // страница отрендерится пустой или с дефолтными значениями благодаря "?."
   if (isLoading) {
-    return (
-      <div className="flex h-[calc(100vh-80px)] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-universe-purple" />
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return <div className="p-10 text-center">Ошибка загрузки данных</div>;
+    return <Loading />;
   }
 
   return (
@@ -105,9 +100,11 @@ export default function ProfilePage() {
           <CardHeader className="text-center pb-2">
             <div className="mx-auto mb-4 relative group">
               <Avatar className="h-28 w-28 border-4 border-background shadow-xl group-hover:scale-105 transition-transform duration-300">
-                <AvatarImage src={profile.avatarUrl} alt={profile.fullName} />
+                {/* 🛡️ Добавляем ?. */}
+                <AvatarImage src={profile?.avatarUrl} alt={profile?.fullName} />
                 <AvatarFallback className="bg-universe-indigo text-white text-3xl font-bold">
-                  {getInitials(profile.firstName, profile.lastName)}
+                  {/* 🛡️ Передаем безопасные значения */}
+                  {getInitials(profile?.firstName, profile?.lastName)}
                 </AvatarFallback>
               </Avatar>
               <Badge className="absolute bottom-1 right-1 bg-green-500 hover:bg-green-600 border-2 border-background px-3">
@@ -115,10 +112,12 @@ export default function ProfilePage() {
               </Badge>
             </div>
             <CardTitle className="text-2xl font-bold text-foreground">
-              {profile.fullName}
+              {/* 🛡️ Добавляем ?. и фолбэк */}
+              {profile?.fullName || "Пользователь"}
             </CardTitle>
             <CardDescription className="flex items-center justify-center gap-1 text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {location || profile.location}
+              <MapPin className="h-3 w-3" />{" "}
+              {location || profile?.location || "Не указано"}
             </CardDescription>
           </CardHeader>
 
@@ -129,22 +128,22 @@ export default function ProfilePage() {
                   <User className="h-4 w-4" /> Статус
                 </span>
                 <span className="font-medium text-foreground">
-                  {profile.status}
+                  {profile?.status || "—"}
                 </span>
               </div>
               <div className="flex justify-between text-sm py-2 border-b border-border">
                 <span className="text-muted-foreground">Email</span>
                 <span
                   className="font-medium text-foreground truncate max-w-[150px]"
-                  title={profile.email}
+                  title={profile?.email}
                 >
-                  {profile.email}
+                  {profile?.email || "—"}
                 </span>
               </div>
               <div className="flex justify-between text-sm py-2 border-b border-border">
                 <span className="text-muted-foreground">ЕНТ Балл</span>
                 <span className="font-bold text-universe-purple text-lg">
-                  {targetScore || profile.entScore}
+                  {targetScore || profile?.entScore || 0}
                 </span>
               </div>
             </div>
@@ -167,7 +166,7 @@ export default function ProfilePage() {
               Личный кабинет
             </h1>
             <span className="text-sm text-muted-foreground">
-              ID: {profile.id}
+              ID: {profile?.id || "Unknown"}
             </span>
           </div>
 
@@ -224,7 +223,8 @@ export default function ProfilePage() {
                         <Label htmlFor="firstName">Имя</Label>
                         <Input
                           id="firstName"
-                          defaultValue={profile.firstName}
+                          // 🛡️ Важно: || "" предотвращает ошибку uncontrolled input
+                          defaultValue={profile?.firstName || ""}
                           disabled
                         />
                       </div>
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                         <Label htmlFor="lastName">Фамилия</Label>
                         <Input
                           id="lastName"
-                          defaultValue={profile.lastName}
+                          defaultValue={profile?.lastName || ""}
                           disabled
                         />
                       </div>
