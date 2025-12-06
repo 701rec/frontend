@@ -77,7 +77,7 @@ export default async function UniversityPage({
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <div className="flex gap-2 mb-3">
+              <div className="flex flex-wrap gap-2 mb-3">
                 <Badge className="bg-universe-cyan text-universe-dark hover:bg-universe-cyan/80 font-bold border-none">
                   {uni.type}
                 </Badge>
@@ -102,7 +102,7 @@ export default async function UniversityPage({
                 </span>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button className="bg-universe-purple hover:bg-universe-purple/90 text-white font-bold px-6 shadow-lg shadow-universe-purple/20">
                 Подать документы
               </Button>
@@ -122,22 +122,23 @@ export default async function UniversityPage({
       {/* --- MAIN CONTENT --- */}
       <div className="container mx-auto px-4 py-8 -mt-6 relative z-10">
         <Tabs defaultValue="about" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
+          {/* Убрал фиксированную ширину, чтобы лучше адаптировалось на мобильных */}
+          <TabsList className="grid w-full grid-cols-3 bg-card shadow-lg p-1 h-auto rounded-xl border border-border/50">
             <TabsTrigger
               value="about"
-              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all text-sm" // Уменьшил шрифт для мобильных
             >
               Об университете
             </TabsTrigger>
             <TabsTrigger
               value="programs"
-              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all text-sm" // Уменьшил шрифт для мобильных
             >
               Программы
             </TabsTrigger>
             <TabsTrigger
               value="admission"
-              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all"
+              className="py-3 data-[state=active]:bg-universe-indigo data-[state=active]:text-white rounded-lg transition-all text-sm" // Уменьшил шрифт для мобильных
             >
               Поступление
             </TabsTrigger>
@@ -145,6 +146,7 @@ export default async function UniversityPage({
 
           {/* TAB: ABOUT */}
           <TabsContent value="about" className="mt-8">
+            {/* На маленьких экранах будет вертикальный стек, на средних - 3 колонки */}
             <div className="grid md:grid-cols-3 gap-6">
               {/* Левая колонка: Описание */}
               <Card className="md:col-span-2 border-border/50 bg-card shadow-sm">
@@ -152,12 +154,13 @@ export default async function UniversityPage({
                   <CardTitle className="text-foreground">Описание</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed text-lg">
+                  <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                     {uni.description}
                   </p>
-                  <div className="mt-8 grid grid-cols-2 gap-4">
+                  {/* Теперь grid-cols-1 на очень маленьких, и grid-cols-2 начиная с `sm` */}
+                  <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-6 bg-universe-cyan/10 rounded-2xl border border-universe-cyan/20">
-                      <h3 className="font-bold text-universe-cyan text-3xl mb-1">
+                      <h3 className="font-bold text-universe-cyan text-2xl md:text-3xl mb-1">
                         {uni.focus}
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -199,7 +202,7 @@ export default async function UniversityPage({
                 <CardContent className="space-y-5">
                   <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg">
                     <Phone className="h-5 w-5 text-universe-cyan" />
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-foreground text-sm sm:text-base">
                       {uni.contacts}
                     </span>
                   </div>
@@ -213,7 +216,7 @@ export default async function UniversityPage({
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-universe-purple cursor-pointer hover:underline font-medium truncate"
+                      className="text-universe-purple cursor-pointer hover:underline font-medium truncate text-sm sm:text-base"
                     >
                       {uni.website}
                     </a>
@@ -236,23 +239,24 @@ export default async function UniversityPage({
           <TabsContent value="programs" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
-                <CardTitle className="text-foreground">
+                <CardTitle className="text-foreground text-xl md:text-2xl">
                   Образовательные программы 2025
                 </CardTitle>
                 <CardDescription>Бакалавриат</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 md:grid-cols-2">
+                {/* Теперь grid-cols-1 на очень маленьких, и grid-cols-2 начиная с `md` */}
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                   {uni.programs && uni.programs.length > 0 ? (
                     uni.programs.map((prog: string, i: number) => (
                       <div
                         key={i}
-                        className="flex items-center gap-4 p-5 border border-border/50 rounded-2xl hover:border-universe-cyan hover:shadow-md transition cursor-pointer group bg-card"
+                        className="flex items-center gap-4 p-4 md:p-5 border border-border/50 rounded-2xl hover:border-universe-cyan hover:shadow-md transition cursor-pointer group bg-card"
                       >
-                        <div className="h-12 w-12 bg-universe-cyan/10 text-universe-cyan rounded-full flex items-center justify-center group-hover:bg-universe-cyan group-hover:text-universe-dark transition">
-                          <BookOpen className="h-6 w-6" />
+                        <div className="h-10 w-10 md:h-12 md:w-12 bg-universe-cyan/10 text-universe-cyan rounded-full flex items-center justify-center group-hover:bg-universe-cyan group-hover:text-universe-dark transition">
+                          <BookOpen className="h-5 w-5 md:h-6 md:w-6" />
                         </div>
-                        <span className="font-bold text-foreground group-hover:text-universe-purple transition-colors">
+                        <span className="font-bold text-sm md:text-base text-foreground group-hover:text-universe-purple transition-colors">
                           {prog}
                         </span>
                       </div>
@@ -271,13 +275,13 @@ export default async function UniversityPage({
           <TabsContent value="admission" className="mt-8">
             <Card className="border-border/50 bg-card shadow-sm">
               <CardHeader>
-                <CardTitle className="text-foreground">
+                <CardTitle className="text-foreground text-xl md:text-2xl">
                   Информация для поступающих
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  <div className="flex justify-between items-center border-b border-border/50 pb-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-border/50 pb-6">
                     <div>
                       <p className="font-bold text-lg text-foreground">
                         Стоимость обучения
@@ -286,7 +290,7 @@ export default async function UniversityPage({
                         За один академический год
                       </p>
                     </div>
-                    <span className="text-2xl font-bold text-universe-purple">
+                    <span className="text-2xl font-bold text-universe-purple mt-3 sm:mt-0">
                       {uni.price}
                     </span>
                   </div>
@@ -295,7 +299,8 @@ export default async function UniversityPage({
                     <p className="font-bold text-foreground">
                       Необходимые документы:
                     </p>
-                    <ul className="grid md:grid-cols-2 gap-3">
+                    {/* Теперь grid-cols-1 на очень маленьких, и grid-cols-2 начиная с `md` */}
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {[
                         "Аттестат",
                         "Сертификат ЕНТ",
@@ -306,16 +311,16 @@ export default async function UniversityPage({
                       ].map((doc, i) => (
                         <li
                           key={i}
-                          className="flex items-center gap-2 text-muted-foreground bg-secondary/30 p-3 rounded-lg border border-border/30"
+                          className="flex items-center gap-2 text-muted-foreground bg-secondary/30 p-3 rounded-lg border border-border/30 text-sm"
                         >
-                          <div className="h-2 w-2 rounded-full bg-universe-cyan" />
+                          <div className="h-2 w-2 rounded-full bg-universe-cyan flex-shrink-0" />
                           {doc}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <Button className="w-full h-12 text-lg bg-universe-indigo hover:bg-universe-indigo/90 shadow-lg shadow-universe-indigo/20">
+                  <Button className="w-full h-12 text-base md:text-lg bg-universe-indigo hover:bg-universe-indigo/90 shadow-lg shadow-universe-indigo/20">
                     Подать онлайн-заявку
                   </Button>
                 </div>
